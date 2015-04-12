@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  */
 
 
-public class Connection{
+public class Connection implements Runnable{
 
     public final int STATE_NOCONECTION = 00;
     public final int STATE_INIT = 01;
@@ -27,14 +27,14 @@ public class Connection{
     private BufferedReader reader;
     private PrintWriter writer;
 
-    private int state;
+    public int state;
     private String myName;
     private String address;
-    private String portnum="13306";
+    private AI mainFiled;
 
     private int PlayerID;
 
-    public ServerConnectionThread(String name,GameFieldClient main){
+    public Connection(String name,AI main){
         this.mainFiled = main;
         this.myName = name;
         state = STATE_NOCONECTION;
@@ -45,12 +45,11 @@ public class Connection{
         if(this.connectedSocket.isConnected()){
             this.reader = new BufferedReader(new InputStreamReader(this.connectedSocket.getInputStream(),"UTF-8"));
             this.writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(this.connectedSocket.getOutputStream(),"UTF-8")));
-
-            Thread msgwait = new Thread();
+            Thread msgwait = new Thread(this);
             msgwait.start();
-
+            System.out.println("Connect to Server");
+            this.state = STATE_INIT;
             return true;
-
         } else {
             return false;
         }
@@ -58,9 +57,11 @@ public class Connection{
     /** サーバへ名前を渡す **/
     public void sendName(){
         if(this.state != STATE_INIT){
+            System.out.println("NO STATE_INIT");
             return;
         }
         this.sendMessage("101 NAME "+ this.myName);
+        System.out.println("Send Name");
     }
 
     /** サーバへの再説毒　**/
@@ -101,7 +102,7 @@ public class Connection{
 
     /** クライアントからのメッセ―ジ到着 */
     public void getMessage(String message){
-        //this.mainFiled.addMessage("Server:"+message);
+        this.mainFiled.addMessage("Server:"+message);
 
         //終了処理
         if(message.toUpperCase().equals("203 EXIT")){
@@ -110,7 +111,7 @@ public class Connection{
                 this.connectedSocket.close();
             } catch (IOException ex) {
                 System.out.println("サーバ切断時にエラーが発生しました");
-               // this.mainFiled.resetAll();
+                this.mainFiled.resetAll();
             }
             return;
         }
@@ -138,7 +139,7 @@ public class Connection{
                     Matcher nmc = TEAMIDMSGPTN.matcher(message);
                     if(nmc.matches()){
                         this.PlayerID = Integer.parseInt(nmc.group(1));
-                        //this.mainFiled.setMyTeamID(this.PlayerID);
+                        this.mainFiled.setMyTeamID(this.PlayerID);
                     }
                 }
                 if(num == 104){
@@ -146,7 +147,7 @@ public class Connection{
                     Matcher nmc = ADVERSARYMSGPTN.matcher(message);
                     if(nmc.matches()){
                         String advName = nmc.group(1);
-                        //this.mainFiled.adversHasCome(advName);
+                        this.mainFiled.adversHasCome(advName);
                         this.state = STATE_GAME;
                     }
                     if(this.PlayerID == 1){
@@ -159,7 +160,7 @@ public class Connection{
                     //プレイ要求
                     this.state = STATE_PLAY;
                     //ボード状態の取得
-                    //this.mainFiled.setPlayingTeamID(this.PlayerID);
+                    this.mainFiled.setPlayingTeamID(this.PlayerID);
                     System.out.println("貴方の手番です。");
                     this.state = STATE_PLAY_GETBOARD;
                     this.boardInfo = new ArrayList<String>();
@@ -167,12 +168,11 @@ public class Connection{
                 } else if(num == 500){
                     //500 PLAYED
                     System.out.println("相手が１手打ちました。");
-                    //this.mainFiled.doPlay();
+                    this.mainFiled.doPlay();
                     if(this.mainFiled.whoIsPlay() == -1){
                         //ターンが終わっていた場合は何もしない
                     } else if(this.PlayerID != this.mainFiled.whoIsPlay()){
                         //相手のターンだった場合
-                        System.out.println("相手が１手打ちました。");
                         this.mainFiled.addMessage("相手の手を待っています。");
                         this.state = STATE_VIEW_GETBOARD;
                         this.boardInfo = new ArrayList<String>();
@@ -180,14 +180,12 @@ public class Connection{
                     }
                 } else if(num == 501){
                     //501 PHASEEND
-                    System.out.println("相手が１手打ちました。");
                     this.mainFiled.addMessage("ターン終了");
                     if(this.mainFiled.isFirstPlayer(this.PlayerID)){
                         //先攻でターンが終わった場合は次は待つことになる。
                         this.mainFiled.changeFirstTeam();
                         this.mainFiled.resetTurnState();
                         this.mainFiled.setPlayingTeamID((this.PlayerID+1)%2);
-                        System.out.println("相手が１手打ちました。");
                         this.mainFiled.addMessage("相手の手を待っています。");
                         this.boardInfo = new ArrayList<String>();
                         this.state = STATE_VIEW_GETBOARD;
@@ -200,7 +198,7 @@ public class Connection{
                 } else if(num == 600){
                     //600 MSG
                     String chat = mc.group(2);
-                    //this.mainFiled.addMessage(chat);
+                    this.mainFiled.addMessage(chat);
                 }
             } else if(this.state == STATE_PLAY){
                 if(num == 200){
@@ -252,16 +250,17 @@ public class Connection{
                         this.state = STATE_GAME;
                     } else {
                         if(winner == -1){
+                            System.out.println("ゲーム終了");
                             this.mainFiled.addMessage("引き分けでした。");
-                            JOptionPane.showMessageDialog(this.mainFiled, "引き分けでした", "ゲーム終了", JOptionPane.INFORMATION_MESSAGE);
                         } else if(this.PlayerID == winner){
+                            System.out.println("ゲーム終了");
                             this.mainFiled.addMessage("あなたの勝利です！");
-                            JOptionPane.showMessageDialog(this.mainFiled, "あなたの勝利です！", "ゲーム終了", JOptionPane.INFORMATION_MESSAGE);
                         } else {
+                            System.out.println("ゲーム終了");
                             this.mainFiled.addMessage("あなたの敗北です！");
-                            JOptionPane.showMessageDialog(this.mainFiled, "あなたの敗北です！", "ゲーム終了", JOptionPane.INFORMATION_MESSAGE);
                         }
                         this.state = STATE_FINISH;
+                        System.out.println("ゲーム終了");
                         this.mainFiled.addMessage("メニューからリセットしてください。");
                     }
                 } else if(num == 600){
@@ -282,11 +281,13 @@ public class Connection{
     }
 
     /** コンソールからIPアドレスを取得 **/
-    public void init_address(){
+    public String init_address(){
+        String address =null;
 
         System.out.print("input IP Address: ");
         InputStreamReader isr = new InputStreamReader(System.in);
         BufferedReader br = new BufferedReader(isr);
+
         try{
             this.address = br.readLine();
 
@@ -294,12 +295,14 @@ public class Connection{
             init_address();
         }
 
-        System.out.println("IP Address:"+ address);
+        System.out.println(address);
+        return address;
     }
 
     @Override
     public void run() {
         String mssage;
+        System.out.println("Call Run Method");
         try {
             while((mssage = this.reader.readLine())!= null){
                 this.getMessage(mssage);
