@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fd1153b1-ed90-4d6b-bd65-d63313d37401" name="Default" comment="">
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/company/Field.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/company/address.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/company/AI.java" afterPath="$PROJECT_DIR$/src/com/company/AI.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/company/Connection.java" afterPath="$PROJECT_DIR$/src/com/company/Connection.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/company/Main.java" afterPath="$PROJECT_DIR$/src/com/company/Main.java" />
