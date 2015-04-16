@@ -90,6 +90,9 @@ public class AI extends javax.swing.JFrame {
 
     private int AI_type;
 
+    private final Point Base0 = new Point(4,7);
+    private final Point Base1 = new Point(4,1);
+
     public static int PointValue2TrueValue(int v){
         return v+1;
     }
@@ -426,6 +429,8 @@ public class AI extends javax.swing.JFrame {
 
     //pre
     }
+
+
 
 
 
