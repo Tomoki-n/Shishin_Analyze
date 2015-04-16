@@ -90,6 +90,9 @@ public class AI extends javax.swing.JFrame {
     /** 自分のチーム番号 */
     private int MyTeamID;
 
+    /** 前のユニットの位置 */
+    private Point[][] prevUnitLocation;
+
     private int AI_type;
 
     private final Point Base0 = new Point(4,7);
@@ -340,6 +343,7 @@ public class AI extends javax.swing.JFrame {
                 int xpos = Integer.parseInt(umc.group(3));
                 int ypos = Integer.parseInt(umc.group(4));
                 Point pos = new Point(xpos,ypos);
+                this.prevUnitLocation[team][unitnum] = this.unitLocation[team][unitnum];
                 this.unitLocation[team][unitnum] = pos;
             } else if(omc.matches()){
                 int ovstnum = Integer.parseInt(omc.group(1));//障害物ID
