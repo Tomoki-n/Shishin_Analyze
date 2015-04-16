@@ -3,5 +3,6 @@ package com.company;
 /**
  * Created by tomoki-n on 2015/04/16.
  */
-public class Controller_Higuchi {
+public class Controller_Higuchi extends Controller {
+
 }
