@@ -16,8 +16,6 @@ import java.util.regex.Pattern;
  */
 public class AI extends javax.swing.JFrame {
 
-
-
     public static final int DEFALUTPORT = 13306;
     public static Color BGColor = new Color(236,233,216);
     //public static int ObstacleCount = 4;
@@ -105,6 +103,7 @@ public class AI extends javax.swing.JFrame {
         this.paintComponents();
         this.sthread.sendName();
     }
+
     /** 状態をすべてリセット */
     public void resetAll() {
         this.state = STATE_WAITINGPLAYER;
@@ -417,6 +416,8 @@ public class AI extends javax.swing.JFrame {
     }
 
     public void ai3(){
+
+        this.sthread.sendPlayMessage(0,5,6);
 
     //Hosono
     }
