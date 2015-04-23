@@ -94,6 +94,17 @@ public class AI extends javax.swing.JFrame {
     /** 前のユニットの位置 */
     private Point[][] prevUnitLocation;
 
+    /**　AI制御クラス **/
+    private Controller_Nishinaka C_Nishinaka;
+
+    private Controller_Hosono C_Hosono;
+
+    private Controller_Higuchi C_Higuchi;
+
+    private Controller_Demo C_Demo;
+
+
+    /** AIの種類 **/
     private int AI_type;
 
     private final Point Base0 = new Point(4,7);
@@ -415,32 +426,51 @@ public class AI extends javax.swing.JFrame {
 
 
     public void ai1(){
+        C_Higuchi = new Controller_Higuchi(info);
 
-        this.sthread.sendPlayMessage(0,5,8);
-    //higuchi
+        int unit[] = new int[3];
+
+        unit = C_Higuchi.UnitOrder();
+
+        this.sthread.sendPlayMessage(unit[0],unit[1],unit[2]);
+
+        //higuchi
     }
 
     public void ai2(){
+        C_Nishinaka = new Controller_Nishinaka(info);
 
-    //Nishinaka
+        int unit[] = new int[3];
+
+        unit = C_Nishinaka.UnitOrder();
+
+        this.sthread.sendPlayMessage(unit[0],unit[1],unit[2]);
+
+        //Nishinaka
     }
 
     public void ai3(){
+        C_Hosono = new Controller_Hosono(info);
 
-        this.sthread.sendPlayMessage(0,5,6);
+        int unit[] = new int[3];
 
-    //Hosono
+        unit = C_Hosono.UnitOrder();
+
+        this.sthread.sendPlayMessage(unit[0],unit[1],unit[2]);
+
+        //Hosono
     }
 
     public void ai_demo(){
+        C_Demo = new Controller_Demo(info);
 
-    //pre
+        int unit[] = new int[3];
+
+        unit = C_Demo.UnitOrder();
+
+        this.sthread.sendPlayMessage(unit[0],unit[1],unit[2]);
+        
+        //pre
     }
-
-
-
-
-
-
 
 }
