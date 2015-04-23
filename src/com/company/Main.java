@@ -63,7 +63,7 @@ public class Main {
 
     public static String AI_type(){
         String type = null;
-        System.out.print("AI:1.Higuchi 2.Nishinaka 3.Hosono 4.Deno \n");
+        System.out.print("AI:1.Higuchi 2.Nishinaka 3.Hosono 4.Demo \n");
         System.out.print("input AI_NUMBER: ");
         InputStreamReader isr = new InputStreamReader(System.in);
         BufferedReader br = new BufferedReader(isr);
