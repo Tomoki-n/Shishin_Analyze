@@ -151,7 +151,7 @@ public class Boardinfo {
     }
 
     /** 最も近いタワー */
-    public Point gettower(Point pos) {
+    public Point getNearestTower(Point pos) {
         Point t1 = new Point(1, 4);
         Point t2 = new Point(4, 4);
         Point t3 = new Point(7, 4);
