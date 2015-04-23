@@ -60,6 +60,9 @@ public class AI extends javax.swing.JFrame {
     private static final int NOPOINTTIME = 10;
 
     /** ボードの状態 */
+    private Boardinfo info;
+
+    /** ボードの状態 */
     private int state = STATE_WAITINGPLAYER;
     /** どちらのプレイヤーがプレイ中か　0または1になる。-1はゲーム中ではない状態 */
     private int playingTeamID = -1;
