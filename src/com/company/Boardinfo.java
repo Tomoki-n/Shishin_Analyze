@@ -7,25 +7,25 @@ import java.awt.*;
  */
 public class Boardinfo {
 
-    //”Õ–Ê‚Ìƒ^ƒCƒv
-    /** ”Õ–Ê‚Ìƒ^ƒCƒv‚ª–¢Šm’è */
+    //ç›¤é¢ã®ã‚¿ã‚¤ãƒ—
+    /** ç›¤é¢ã®ã‚¿ã‚¤ãƒ—ãŒæœªç¢ºå®š */
     public static final int BOARD_TYPE_UNDEFINED = -1;
-    /** ”Õ–Ê‚ªƒP[ƒX1 */
+    /** ç›¤é¢ãŒã‚±ãƒ¼ã‚¹1 */
     public static final int BOARD_TYPE_A = 1;
-    /** ”Õ–Ê‚ªƒP[ƒX2 */
+    /** ç›¤é¢ãŒã‚±ãƒ¼ã‚¹2 */
     public static final int BOARD_TYPE_B = 2;
-    /** ”Õ–Ê‚ªƒP[ƒX3 */
+    /** ç›¤é¢ãŒã‚±ãƒ¼ã‚¹3 */
     public static final int BOARD_TYPE_C = 3;
-    /** ”Õ–Ê‚ªƒP[ƒX4 */
+    /** ç›¤é¢ãŒã‚±ãƒ¼ã‚¹4 */
     public static final int BOARD_TYPE_D = 4;
-    /** ”Õ–Ê‚ªƒP[ƒX1‚à‚µ‚­‚Í2 */
+    /** ç›¤é¢ãŒã‚±ãƒ¼ã‚¹1ã‚‚ã—ãã¯2 */
     public static final int BOARD_TYPE_AB = 5;
-    /** ”Õ–Ê‚ªƒP[ƒX3‚à‚µ‚­‚Í4 */
+    /** ç›¤é¢ãŒã‚±ãƒ¼ã‚¹3ã‚‚ã—ãã¯4 */
     public static final int BOARD_TYPE_CD = 6;
 
 
 
-    //ó‘Ô
+    //çŠ¶æ…‹
     public static final int STATE_WAITINGPLAYER = 0;
     public static final int STATE_PLAY = 10;
     public static final int STATE_PLAY_UNITSELECT = 15;
@@ -33,65 +33,65 @@ public class Boardinfo {
     public static final int STATE_CALC = 6;
     public static final int STATE_FINISH = 7;
 
-    /** ‡”ÔƒJƒEƒ“ƒg—p */
+    /** é †ç•ªã‚«ã‚¦ãƒ³ãƒˆç”¨ */
     private int turnState = -1;
     public static final int STATE_PLAY_TURN1 = 11;
     public static final int STATE_PLAY_TURN2 = 12;
     public static final int STATE_PLAY_TURN3 = 13;
     public static final int STATE_PLAY_TURN4 = 14;
 
-    //è‡’lİ’è
-    /** ƒQ[ƒ€I—¹‚Ì“_” */
+    //é–¾å€¤è¨­å®š
+    /** ã‚²ãƒ¼ãƒ çµ‚äº†ã®ç‚¹æ•° */
     private static final int MAXPOINT = 50;
-    /** –³“¾“_‚ÌÅ‘åƒ^[ƒ“” */
+    /** ç„¡å¾—ç‚¹ã®æœ€å¤§ã‚¿ãƒ¼ãƒ³æ•° */
     private static final int NOPOINTTIME = 10;
 
 
-    /** Œo‰ßƒ^[ƒ“” */
+    /** çµŒéã‚¿ãƒ¼ãƒ³æ•° */
     private int turnCount;
 
-    /** ƒ†ƒjƒbƒg‚ÌˆÊ’u */
+    /** ãƒ¦ãƒ‹ãƒƒãƒˆã®ä½ç½® */
     private Point[][] unitLocation;
 
-    /** “ƒ‚Ì•Ûó‘Ô */
+    /** å¡”ã®ä¿æŒçŠ¶æ…‹ */
     private int[] towerHold;
-    /** “ƒ‚ÌŒÂ” */
+    /** å¡”ã®å€‹æ•° */
     private final int towerCount = 3;
 
-    /** ƒ`[ƒ€‚Ì“¾“_ */
+    /** ãƒãƒ¼ãƒ ã®å¾—ç‚¹ */
     private int[] teamPoint;
 
-    /** ©•ª‚Ìƒ`[ƒ€”Ô† */
+    /** è‡ªåˆ†ã®ãƒãƒ¼ãƒ ç•ªå· */
     private int MyTeamID;
 
-    /** ƒ{[ƒh‚Ìó‘Ô */
+    /** ãƒœãƒ¼ãƒ‰ã®çŠ¶æ…‹ */
     private int state = STATE_WAITINGPLAYER;
 
-    /** ‚Ç‚¿‚ç‚ÌƒvƒŒƒCƒ„[‚ªƒvƒŒƒC’†‚©@0‚Ü‚½‚Í1‚É‚È‚éB-1‚ÍƒQ[ƒ€’†‚Å‚Í‚È‚¢ó‘Ô */
+    /** ã©ã¡ã‚‰ã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒãƒ—ãƒ¬ã‚¤ä¸­ã‹ã€€0ã¾ãŸã¯1ã«ãªã‚‹ã€‚-1ã¯ã‚²ãƒ¼ãƒ ä¸­ã§ã¯ãªã„çŠ¶æ…‹ */
     private int playingTeamID;
 
-    /** æUƒvƒŒƒCƒ„[‚Í‚Ç‚¿‚ç‚© */
+    /** å…ˆæ”»ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¯ã©ã¡ã‚‰ã‹ */
     private int firstTeamID;
 
-    /** –{w‚ÌˆÊ’u */
+    /** æœ¬é™£ã®ä½ç½® */
     private final Point Base0 = new Point(4,7);
     private final Point Base1 = new Point(4,1);
 
-    /** ‘O‚Ìƒ†ƒjƒbƒg‚ÌˆÊ’u */
+    /** å‰ã®ãƒ¦ãƒ‹ãƒƒãƒˆã®ä½ç½® */
     private Point[][] prevUnitLocation;
 
-    /** Œ»İ‚Ìƒ{[ƒh‚Ìƒ^ƒCƒv */
+    /** ç¾åœ¨ã®ãƒœãƒ¼ãƒ‰ã®ã‚¿ã‚¤ãƒ— */
     private int boardType;
 
 
-    /** ‰Šú‰» */
+    /** åˆæœŸåŒ– */
     public Boardinfo() {
         this.playingTeamID = -1;
         this.firstTeamID = -1;
         this.turnCount = 0;
         this.boardType = BOARD_TYPE_UNDEFINED;
 
-        //ƒ†ƒjƒbƒg‚Ìİ’u
+        //ãƒ¦ãƒ‹ãƒƒãƒˆã®è¨­ç½®
         this.unitLocation = new Point[2][4];
         for(int i = 0; i < 4; i++){
             this.unitLocation[0][i] = new Point(4,7);
@@ -108,12 +108,11 @@ public class Boardinfo {
         this.teamPoint[1] = 0;
     }
 
-<<<<<<< HEAD
-    /** Ÿ‚Á‚Ä‚¢‚éƒ`[ƒ€‚ÌID */
+    /** å‹ã£ã¦ã„ã‚‹ãƒãƒ¼ãƒ ã®ID */
     private int victoryTeamID = -1;
 
 
-    /** “ñ“_ŠÔ‚Ì‹——£ */
+    /** äºŒç‚¹é–“ã®è·é›¢ */
     public int distance(Point a, Point b) {
         if(a.x == b.x) {
             return Math.abs(a.y - b.y);
@@ -126,26 +125,22 @@ public class Boardinfo {
         }
     }
 
-    /** ƒ†ƒjƒbƒgˆÊ’u‚ğ“n‚· */
-=======
-    /** ƒ†ƒjƒbƒgˆÊ’u‚ğæ“¾‚·‚é */
->>>>>>> Higuchi
+    /** ãƒ¦ãƒ‹ãƒƒãƒˆä½ç½®ã‚’å–å¾—ã™ã‚‹ */
     public Point[][] getUnitLocation() {
-        //ÀÛ‚ÍƒRƒs[‚ğ“n‚µ‚½‚¢(Ÿè‚É•ÏX‚³‚ê‚é‚ÆŒãX¢‚é)
+        //å®Ÿéš›ã¯ã‚³ãƒ”ãƒ¼ã‚’æ¸¡ã—ãŸã„(å‹æ‰‹ã«å¤‰æ›´ã•ã‚Œã‚‹ã¨å¾Œã€…å›°ã‚‹)
         return this.unitLocation;
     }
 
     /**
-     * ƒ†ƒjƒbƒgˆÊ’u‚ğİ’è‚·‚é
-     * y’ˆÓzAIˆÈŠO‚ÌƒNƒ‰ƒX‚©‚çŒÄ‚Ño‚³‚È‚¢‚æ‚¤‚É‚·‚é‚±‚Æ
-     * @param unitLocate Œ»İ‚Ìƒ†ƒjƒbƒgˆÊ’u
+     * ãƒ¦ãƒ‹ãƒƒãƒˆä½ç½®ã‚’è¨­å®šã™ã‚‹
+     * ã€æ³¨æ„ã€‘AIä»¥å¤–ã®ã‚¯ãƒ©ã‚¹ã‹ã‚‰å‘¼ã³å‡ºã•ãªã„ã‚ˆã†ã«ã™ã‚‹ã“ã¨
+     * @param unitLocate ç¾åœ¨ã®ãƒ¦ãƒ‹ãƒƒãƒˆä½ç½®
      */
     void setUnitLocation(Point[][] unitLocate) {
         this.unitLocation = unitLocate;
     }
 
-<<<<<<< HEAD
-    /** “¾“_· */
+    /** å¾—ç‚¹å·® */
     public int getPoint(){
         int i,j;
         i=teamPoint[0]-teamPoint[1];
@@ -155,27 +150,28 @@ public class Boardinfo {
         return Math.abs(i);
     }
 
-    /** Å‚à‹ß‚¢ƒ^ƒ[ */
-    public Point[][] gettower(Point[][] pos){
-        Point t1 = Point[1][4];
-        Point t2 = Point[4][4];
-        Point t3 = Point[7][4];
+    /** æœ€ã‚‚è¿‘ã„ã‚¿ãƒ¯ãƒ¼ */
+    public Point gettower(Point pos) {
+        Point t1 = new Point(1, 4);
+        Point t2 = new Point(4, 4);
+        Point t3 = new Point(7, 4);
 
-        int i,j,k;
-        i=distance(Point pos,Point t1);
-        j=distance(Point pos,Point t2);
-        k=distance(Point pos,Point t3);
+        int i, j, k;
+        i = distance(pos, t1);
+        j = distance(pos, t2);
+        k = distance(pos, t3);
 
-        if(i<j&&i<k)  return(t1);
-        else if(j<i&&j<k)  return(t2);
-        else if(k<i&&k<j)  return(t3);
-=======
-    /** ƒ^ƒ[‚ğ‚Ç‚¿‚ç‚ªè‹’‚µ‚Ä‚¢‚é‚©‚ğ¦‚·”z—ñ‚ğæ“¾‚·‚é */
+        if (i < j && i < k) return (t1);
+        else if (j < i && j < k) return (t2);
+        else if (k < i && k < j) return (t3);
+        else return (t2);
+    }
+    /** ã‚¿ãƒ¯ãƒ¼ã‚’ã©ã¡ã‚‰ãŒå æ‹ ã—ã¦ã„ã‚‹ã‹ã‚’ç¤ºã™é…åˆ—ã‚’å–å¾—ã™ã‚‹ */
     public int[] getTowerHold() {
         return this.towerHold;
     }
 
-    /** Ÿ‚Ìè‚ª‚Ç‚¿‚ç‚©‚ğ•Ô‚· */
+    /** æ¬¡ã®æ‰‹ãŒã©ã¡ã‚‰ã‹ã‚’è¿”ã™ */
     public int whoIsPlay(){
         if(this.turnState == STATE_PLAY_TURN1){
             return this.firstTeamID;
@@ -187,6 +183,5 @@ public class Boardinfo {
             return this.firstTeamID;
         }
         return -1;
->>>>>>> Higuchi
     }
 }
