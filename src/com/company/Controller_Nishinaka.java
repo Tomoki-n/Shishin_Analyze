@@ -7,18 +7,22 @@ public class Controller_Nishinaka {
 
 
     Boardinfo info;
-
+    Panel[][] panel;
 
     Controller_Nishinaka(Boardinfo Binfo){
-
         info = Binfo;
-
-
     }
+
+    //1.2つ同時に動く
+    //2.敵を無視する。
+
+
+
 
 
     /**  コマの移動命令 **/
     public int[] UnitOrder(){
+
         int unit[] = new int[3];
 
         /** 0:コマの種類　1:X座標　2:Y座標 **/
@@ -28,5 +32,9 @@ public class Controller_Nishinaka {
 
         return unit;
     }
+
+
+
+
 
 }

@@ -60,7 +60,7 @@ public class AI extends javax.swing.JFrame {
     private static final int NOPOINTTIME = 10;
 
     /** ボードの状態 */
-    private Boardinfo info;
+    public Boardinfo info;
 
     /** ボードの状態 */
     private int state = STATE_WAITINGPLAYER;
@@ -153,10 +153,10 @@ public class AI extends javax.swing.JFrame {
             System.exit(0);
         }
         //正しく接続できたら処理開始
-        this.playingTeamID = -1;
-        this.firstTeamID = -1;
-        this.ternCount = 0;
-        this.gameCell = new Field[11][11];
+        this.playingTeamID = -1; info.playingTeamID = -1;
+        this.firstTeamID = -1; info.firstTeamID = -1;
+        this.ternCount = 0; info.turnCount = 0;
+        this.gameCell = new Field[11][11]; info.gamecell = new Field[11][11];
         for(int i=0;i<11;i++){
             for(int j=0;j<11;j++){
                 this.gameCell[j][i] = new Field(this);
@@ -180,18 +180,24 @@ public class AI extends javax.swing.JFrame {
         //ユニットの設置
         this.unitLocation = new Point[2][4];
         for(int i=0;i<4;i++){
-            this.unitLocation[0][i] = new Point(4,7);
-            this.unitLocation[1][i] = new Point(4,1);
+            this.unitLocation[0][i] = new Point(4,7);info.unitLocation[0][i] = new Point(4,7);
+            this.unitLocation[1][i] = new Point(4,1);info.unitLocation[1][i] = new Point(4,7);
         }
 
         this.towerHold = new int[towerCount];
+        info.towerHold = new int[towerCount];
         for(int i=0;i<towerCount;i++){
             this.towerHold[i] = -1;
+            info.towerHold[1] = -1;
         }
 
         this.teamPoint = new int[2];
         this.teamPoint[0] = 0;
         this.teamPoint[1] = 0;
+
+        info.teamPoint = new int[2];
+        info.teamPoint[0] = 0;
+        info.teamPoint[1] = 0;
 
         this.resetTurnState();
 
@@ -202,6 +208,9 @@ public class AI extends javax.swing.JFrame {
     public void resetTurnState(){
         this.turnState = STATE_PLAY_TURN1;
         this.ternCount++;
+        info.turnState = STATE_PLAY_TURN1;
+        info.turnCount++;
+
     }
 
     /** 表示項目の一新 */
@@ -246,12 +255,16 @@ public class AI extends javax.swing.JFrame {
     /** 先攻、後攻の切り替え */
     public void changeFirstTeam(){
         this.firstTeamID = (this.firstTeamID + 1 )%2;
+        info.firstTeamID = (this.firstTeamID + 1 )%2;
     }
 
     /** 手番のプレイヤーを変更 */
     public void setPlayingTeamID(int i){
         this.playingTeamID = i;
         this.state = STATE_PLAY;
+        info.playingTeamID = i;
+        info.state = STATE_PLAY;
+
     }
 
 
@@ -357,7 +370,9 @@ public class AI extends javax.swing.JFrame {
                 int ypos = Integer.parseInt(umc.group(4));
                 Point pos = new Point(xpos,ypos);
                 this.prevUnitLocation[team][unitnum] = this.unitLocation[team][unitnum];
+                info.prevUnitLocation[team][unitnum] = this.prevUnitLocation[team][unitnum];
                 this.unitLocation[team][unitnum] = pos;
+                info.unitLocation[team][unitnum] = pos;
             } else if(omc.matches()){
                 int ovstnum = Integer.parseInt(omc.group(1));//障害物ID
                 int xpos = Integer.parseInt(omc.group(2));
@@ -367,10 +382,12 @@ public class AI extends javax.swing.JFrame {
                 int unitnum = Integer.parseInt(tmc.group(1));
                 int team = Integer.parseInt(tmc.group(2));
                 this.towerHold[unitnum] = team;
+                info.towerHold[unitnum] = team;
             } else if(smc.matches()){
                 int team = Integer.parseInt(smc.group(1));
                 int value = Integer.parseInt(smc.group(2));
                 this.teamPoint[team] = value;
+                info.teamPoint[team] = value;
             }
         }
         this.paintComponents();

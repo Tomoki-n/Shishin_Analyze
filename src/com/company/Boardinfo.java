@@ -34,7 +34,7 @@ public class Boardinfo {
     public static final int STATE_FINISH = 7;
 
     /** 順番カウント用 */
-    private int turnState = -1;
+    public int turnState = -1;
     public static final int STATE_PLAY_TURN1 = 11;
     public static final int STATE_PLAY_TURN2 = 12;
     public static final int STATE_PLAY_TURN3 = 13;
@@ -49,46 +49,48 @@ public class Boardinfo {
 
     //閾値設定
     /** ゲーム終了の点数 */
-    private static final int MAXPOINT = 50;
+    public static final int MAXPOINT = 50;
     /** 無得点の最大ターン数 */
-    private static final int NOPOINTTIME = 10;
+    public static final int NOPOINTTIME = 10;
 
 
     /** 経過ターン数 */
-    private int turnCount;
+    public int turnCount;
 
     /** ユニットの位置 */
-    private Point[][] unitLocation;
+    public Point[][] unitLocation;
 
     /** 塔の保持状態 */
-    private int[] towerHold;
+    public int[] towerHold;
     /** 塔の個数 */
-    private final int towerCount = 3;
+    public final int towerCount = 3;
 
     /** チームの得点 */
-    private int[] teamPoint;
+    public int[] teamPoint;
 
     /** 自分のチーム番号 */
-    private int MyTeamID;
+    public int MyTeamID;
 
     /** ボードの状態 */
-    private int state = STATE_WAITINGPLAYER;
+    public int state = STATE_WAITINGPLAYER;
 
     /** どちらのプレイヤーがプレイ中か　0または1になる。-1はゲーム中ではない状態 */
-    private int playingTeamID;
+    public int playingTeamID;
 
     /** 先攻プレイヤーはどちらか */
-    private int firstTeamID;
+    public int firstTeamID;
 
     /** 本陣の位置 */
-    private final Point Base0 = new Point(4,7);
-    private final Point Base1 = new Point(4,1);
+    public final Point Base0 = new Point(4,7);
+    public final Point Base1 = new Point(4,1);
 
     /** 前のユニットの位置 */
-    private Point[][] prevUnitLocation;
+    public Point[][] prevUnitLocation;
 
     /** 現在のボードのタイプ */
-    private int boardType;
+    public int boardType;
+
+    public Field gamecell[][];
 
 
     /** 初期化 */
@@ -116,7 +118,7 @@ public class Boardinfo {
     }
 
     /** 勝っているチームのID */
-    private int victoryTeamID = -1;
+    public int victoryTeamID = -1;
 
 
     /** 二点間の距離 */
