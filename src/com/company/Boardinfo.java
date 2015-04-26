@@ -41,10 +41,10 @@ public class Boardinfo {
     public static final int STATE_PLAY_TURN4 = 14;
 
     /** 駒の種類*/
-    public static final int STATE_PLAY_TURN1 = 11;
-    public static final int STATE_PLAY_TURN2 = 12;
-    public static final int STATE_PLAY_TURN3 = 13;
-    public static final int STATE_PLAY_TURN4 = 14;
+    public static final int BLACK  = 1;
+    public static final int RED    = 2;
+    public static final int GREEN  = 3;
+    public static final int YELLOW = 4;
 
 
     //閾値設定
@@ -193,17 +193,80 @@ public class Boardinfo {
     }
 
 
-    /** 1VS1の対戦 */
-    public boolean onevs(int A_char, int E_char){
 
+    /** 1VS1の対戦
+     * 戻り値：1:勝ち 0:負け 2:引き分け -1:エラー
+     * 引数：  BLACK　1 RED 2 GREEN  3　YELLOW 4
+     * */
 
-        return true;
+    public int onevs(int A_char, int E_char){
+
+        if(A_char == BLACK){
+            if(E_char == BLACK){
+                return 2;
+            }
+            else if (E_char == RED){
+                return 1;
+            }
+            else if (E_char == GREEN){
+                return 0;
+            }
+            else if (E_char == YELLOW){
+                return 2;
+            }
+        }
+
+        if(A_char == RED){
+            if(E_char == BLACK){
+                return 0;
+            }
+            else if (E_char == RED){
+                return 2;
+            }
+            else if (E_char == GREEN){
+                return 2;
+            }
+            else if (E_char == YELLOW){
+                return 1;
+            }
+        }
+        if(A_char == GREEN){
+            if(E_char == BLACK){
+                return 1;
+            }
+            else if (E_char == RED){
+                return 2;
+            }
+            else if (E_char == GREEN){
+                return 2;
+            }
+            else if (E_char == YELLOW){
+                return 0;
+            }
+        }
+        if(A_char == YELLOW){
+            if(E_char == BLACK){
+                return 2;
+            }
+            else if (E_char == RED){
+                return 0;
+            }
+            else if (E_char == GREEN){
+                return 1;
+            }
+            else if (E_char == YELLOW){
+                return 2;
+            }
+        }
+
+        return -1;
     }
 
     /** 2VS2の対戦 */
-    public  boolean twovs(int A_char1, int A_char2, int E_char1, int E_char1){
+    public  boolean twovs(int A_char1, int A_char2, int E_char1, int E_char2){
 
-        return true
+
+        return true;
     }
 
 }
