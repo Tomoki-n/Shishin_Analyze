@@ -212,7 +212,6 @@ public class Connection implements Runnable{
                     } else if(this.PlayerID != this.mainFiled.whoIsPlay()){
                         //相手のターンだった場合
                         this.mainFiled.setPlayingTeamID(this.mainFiled.whoIsPlay());
-                        System.out.println("相手が１手打ちました。");
                         this.mainFiled.addMessage("相手の手を待っています。");
                         this.state = STATE_VIEW_GETBOARD;
                         this.boardInfo = new ArrayList<String>();
@@ -224,7 +223,6 @@ public class Connection implements Runnable{
                     this.mainFiled.addMessage(chat);
                 } else {
                     //不可能な手
-                    System.out.println("相手が１手打ちました。");
                     this.mainFiled.addMessage("その位置には移動できません。");
                     this.state = STATE_GAME;
                 }
