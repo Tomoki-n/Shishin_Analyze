@@ -6,19 +6,27 @@ package com.company;
 public class Controller_Nishinaka {
 
 
+
     Boardinfo info;
     Panel[][] panel;
 
+
+    //ターン管理
+    public static final int STATE_PLAY_TURN1 = 11;
+    public static final int STATE_PLAY_TURN2 = 12;
+    public static final int STATE_PLAY_TURN3 = 13;
+    public static final int STATE_PLAY_TURN4 = 14;
+
+
+    /**
+     * コンストラクタ
+     * */
     Controller_Nishinaka(Boardinfo Binfo){
         info = Binfo;
     }
 
     //1.2つ同時に動く
-    //2.敵を無視する。
-
-
-
-
+    //2.敵を無視する
 
     /**  コマの移動命令 **/
     public int[] UnitOrder(){
@@ -32,6 +40,8 @@ public class Controller_Nishinaka {
 
         return unit;
     }
+
+
 
 
 
