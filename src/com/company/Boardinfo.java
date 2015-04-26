@@ -40,6 +40,13 @@ public class Boardinfo {
     public static final int STATE_PLAY_TURN3 = 13;
     public static final int STATE_PLAY_TURN4 = 14;
 
+    /** 駒の種類*/
+    public static final int STATE_PLAY_TURN1 = 11;
+    public static final int STATE_PLAY_TURN2 = 12;
+    public static final int STATE_PLAY_TURN3 = 13;
+    public static final int STATE_PLAY_TURN4 = 14;
+
+
     //閾値設定
     /** ゲーム終了の点数 */
     private static final int MAXPOINT = 50;
@@ -184,4 +191,19 @@ public class Boardinfo {
         }
         return -1;
     }
+
+
+    /** 1VS1の対戦 */
+    public boolean onevs(int A_char, int E_char){
+
+
+        return true;
+    }
+
+    /** 2VS2の対戦 */
+    public  boolean twovs(int A_char1, int A_char2, int E_char1, int E_char1){
+
+        return true
+    }
+
 }
