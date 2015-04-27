@@ -91,6 +91,9 @@ public class AI extends javax.swing.JFrame {
     /** 自分のチーム番号 */
     private int MyTeamID;
 
+    private boolean nextenable = false;
+    private int[] nextorder;
+
     /** 前のユニットの位置 */
     private Point[][] prevUnitLocation;
 
@@ -455,16 +458,22 @@ public class AI extends javax.swing.JFrame {
     }
 
     public void ai2(){
-        C_Nishinaka = new Controller_Nishinaka(info);
+        if(nextenable == false) {
+            C_Nishinaka = new Controller_Nishinaka(info);
 
-        int unit[] = new int[3];
+            int unit[][] = new int[2][3];
+            int nextorder[] = new int [3];
+            unit = C_Nishinaka.UnitOrder();
 
-        unit = C_Nishinaka.UnitOrder();
-
-        this.sthread.sendPlayMessage(unit[0],unit[1],unit[2]);
-
-        //Nishinaka
-    }
+            nextorder[0] = unit[1][0]; nextorder[1] = unit[1][1]; nextorder[2] = unit[1][2];
+            nextenable = true;
+            this.sthread.sendPlayMessage(unit[0][0], unit[0][1], unit[0][2]);
+         }
+        if (nextenable = true) {
+            nextenable = false;
+            this.sthread.sendPlayMessage(nextorder[0], nextorder[1], nextorder[2]);
+        }
+   }
 
     public void ai3(){
         C_Hosono = new Controller_Hosono(info);
