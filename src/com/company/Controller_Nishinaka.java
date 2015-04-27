@@ -40,9 +40,9 @@ public class Controller_Nishinaka {
 
 
     //タワー位置
-    public static final Point Towor0 = new Point(1, 4);
-    public static final Point Towor1 = new Point(4, 4);
-    public static final Point Towor2 = new Point(7, 4);
+    public static final Point Tower0 = new Point(1, 4);
+    public static final Point Tower1 = new Point(4, 4);
+    public static final Point Tower2 = new Point(7, 4);
 
 
     //上側：本陣位置
@@ -64,25 +64,41 @@ public class Controller_Nishinaka {
     public static final Point Route032 = new Point(6, 5);
     public static final Point Route033 = new Point(7, 4);
 
+    public static final int Route001_ = 101;
+    public static final int Route002_ = 102;
+    public static final int Route003_ = 103;
+
+    public static final int Route011_ = 111;
+    public static final int Route012_ = 112;
+    public static final int Route013_ = 113;
+
+    public static final int Route021_ = 121;
+    public static final int Route022_ = 122;
+    public static final int Route023_ = 123;
+
+    public static final int Route031_ = 131;
+    public static final int Route032_ = 132;
+    public static final int Route033_ = 133;
+
 
     //下側：本陣位置
     public static final Point Base1 = new Point(4, 7);
 
-    public static final Point Route101 = new Point(3, 2);
-    public static final Point Route102 = new Point(2, 3);
-    public static final Point Route103 = new Point(1, 4);
+    public static final int Route101_ = 101;
+    public static final int Route102_ = 102;
+    public static final int Route103_ = 103;
 
-    public static final Point Route111 = new Point(3, 2);
-    public static final Point Route112 = new Point(3, 3);
-    public static final Point Route113 = new Point(4, 4);
+    public static final int Route111_ = 111;
+    public static final int Route112_ = 112;
+    public static final int Route113_ = 113;
 
-    public static final Point Route121 = new Point(5, 2);
-    public static final Point Route122 = new Point(5, 3);
-    public static final Point Route123 = new Point(4, 4);
+    public static final int Route121_ = 121;
+    public static final int Route122_ = 122;
+    public static final int Route123_ = 123;
 
-    public static final Point Route131 = new Point(5, 2);
-    public static final Point Route132 = new Point(6, 2);
-    public static final Point Route133 = new Point(7, 4);
+    public static final int Route131_ = 131;
+    public static final int Route132_ = 132;
+    public static final int Route133_ = 134;
 
 
     public int field_count = 0;
@@ -96,13 +112,15 @@ public class Controller_Nishinaka {
     public static final int BLACK_YELLOW = 101;
 
     public int base_unitpair;
+    public int routeinfo = -1;
 
 
     /**
      * コンストラクタ
      */
-    Controller_Nishinaka(Boardinfo Binfo) {
+    Controller_Nishinaka(Boardinfo Binfo, int route) {
         info = Binfo;
+        routeinfo = route;
         init();
 
     }
@@ -191,16 +209,83 @@ public class Controller_Nishinaka {
                                 unit[0][0] = setupUnit(1)[1]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
                                 break;
                             }
-
                         }
                         break;
                     }
-
                     case FIELD_1_TOWER_0_CAMP_1:
+                        if(routeinfo == Route001_){
 
+                        }
+                        if(routeinfo == Route002_){
 
+                        }
+                        if(routeinfo == Route003_){
+
+                        }
+                        if(routeinfo == Route111_){
+
+                        }
+                        if(routeinfo == Route112_){
+
+                        }
+                        if(routeinfo == Route113_){
+
+                        }
+                        if(routeinfo == Route121_){
+
+                        }
+                        if(routeinfo == Route122_){
+
+                        }
+                        if(routeinfo == Route123_){
+
+                        }
+                        if(routeinfo == Route131_){
+
+                        }
+                        if(routeinfo == Route132_){
+
+                        }
+                        if(routeinfo == Route133_){
+
+                        }
                     case FIELD_1_TOWER_1_CAMP_0:
+                        if(routeinfo == Route001_){
 
+                        }
+                        if(routeinfo == Route002_){
+
+                        }
+                        if(routeinfo == Route003_){
+
+                        }
+                        if(routeinfo == Route111_){
+
+                        }
+                        if(routeinfo == Route112_){
+
+                        }
+                        if(routeinfo == Route113_){
+
+                        }
+                        if(routeinfo == Route121_){
+
+                        }
+                        if(routeinfo == Route122_){
+
+                        }
+                        if(routeinfo == Route123_){
+
+                        }
+                        if(routeinfo == Route131_){
+
+                        }
+                        if(routeinfo == Route132_){
+
+                        }
+                        if(routeinfo == Route133_){
+
+                        }
 
                     case FIELD_2_TOWER_0_CAMP_0:
 
@@ -282,18 +367,18 @@ public class Controller_Nishinaka {
         if (info.MyTeamID == 0) {
             for (int i = 0; i < 4; i++) {
                 if (info.unitLocation[info.MyTeamID][i] == Base0) base_count++;
-                if (info.unitLocation[info.MyTeamID][i] == Towor0) tower_count++;
-                if (info.unitLocation[info.MyTeamID][i] == Towor1) tower_count++;
-                if (info.unitLocation[info.MyTeamID][i] == Towor2) tower_count++;
+                if (info.unitLocation[info.MyTeamID][i] == Tower0) tower_count++;
+                if (info.unitLocation[info.MyTeamID][i] == Tower1) tower_count++;
+                if (info.unitLocation[info.MyTeamID][i] == Tower2) tower_count++;
             }
             field_count = 4 - base_count - tower_count;
             unit[0] = base_count; unit[1] = tower_count; unit[2] = field_count;
         } else if (info.MyTeamID == 1) {
             for (int i = 0; i < 4; i++) {
                 if (info.unitLocation[info.MyTeamID][i] == Base0) base_count++;
-                if (info.unitLocation[info.MyTeamID][i] == Towor0) tower_count++;
-                if (info.unitLocation[info.MyTeamID][i] == Towor1) tower_count++;
-                if (info.unitLocation[info.MyTeamID][i] == Towor2) tower_count++;
+                if (info.unitLocation[info.MyTeamID][i] == Tower0) tower_count++;
+                if (info.unitLocation[info.MyTeamID][i] == Tower1) tower_count++;
+                if (info.unitLocation[info.MyTeamID][i] == Tower2) tower_count++;
             }
             field_count = 4 - base_count - tower_count;
             unit[0] = base_count; unit[1] = tower_count; unit[2] = field_count;
@@ -340,18 +425,14 @@ public class Controller_Nishinaka {
         }
     }
 
+    public int Send_Routeinfo(){
+       return this.routeinfo;
+    }
+
     public void search_field(){
         if (info.MyTeamID == 0) {
             for (int i = 0; i < 4; i++) {
-                if (info.unitLocation[info.MyTeamID][i] == Route001){
 
-                }
-                if (info.unitLocation[info.MyTeamID][i] == Route002){
-
-                }
-                if (info.unitLocation[info.MyTeamID][i] == Route003){
-
-                }
 
             }
         } else if (info.MyTeamID == 1) {

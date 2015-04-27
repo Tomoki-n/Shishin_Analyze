@@ -93,6 +93,7 @@ public class AI extends javax.swing.JFrame {
 
     private boolean nextenable = false;
     private int[] nextorder;
+    private int routeinfo = -1;
 
     /** 前のユニットの位置 */
     private Point[][] prevUnitLocation;
@@ -459,11 +460,12 @@ public class AI extends javax.swing.JFrame {
 
     public void ai2(){
         if(nextenable == false) {
-            C_Nishinaka = new Controller_Nishinaka(info);
+            C_Nishinaka = new Controller_Nishinaka(info,routeinfo);
 
             int unit[][] = new int[2][3];
             int nextorder[] = new int [3];
             unit = C_Nishinaka.UnitOrder();
+            routeinfo = C_Nishinaka.Send_Routeinfo();
 
             nextorder[0] = unit[1][0]; nextorder[1] = unit[1][1]; nextorder[2] = unit[1][2];
             nextenable = true;
