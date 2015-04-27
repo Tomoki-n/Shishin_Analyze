@@ -68,7 +68,7 @@ public class Boardinfo {
     /** チームの得点 */
     public int[] teamPoint;
 
-    /** 自分のチーム番号 */
+    /** 自分のチーム番号 0ならば初手先攻、1ならば初手後攻 */
     public int MyTeamID;
 
     /** ボードの状態 */
