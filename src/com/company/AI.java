@@ -38,6 +38,24 @@ public class AI extends javax.swing.JFrame {
         }
     }
 
+    //盤面のタイプ
+    /** 現在のボードのタイプ */
+    public int boardType;
+    /** 盤面のタイプが未確定 */
+    public static final int BOARD_TYPE_UNDEFINED = -1;
+    /** 盤面がケース1 */
+    public static final int BOARD_TYPE_A = 1;
+    /** 盤面がケース2 */
+    public static final int BOARD_TYPE_B = 2;
+    /** 盤面がケース3 */
+    public static final int BOARD_TYPE_C = 3;
+    /** 盤面がケース4 */
+    public static final int BOARD_TYPE_D = 4;
+    /** 盤面がケース1もしくは2 */
+    public static final int BOARD_TYPE_AB = 5;
+    /** 盤面がケース3もしくは4 */
+    public static final int BOARD_TYPE_CD = 6;
+
     //状態
     public static final int STATE_WAITINGPLAYER = 0;
     public static final int STATE_PLAY = 10;
@@ -91,12 +109,21 @@ public class AI extends javax.swing.JFrame {
     /** 自分のチーム番号 */
     private int MyTeamID;
 
+
     private boolean nextenable = false;
     private int[] nextorder;
     private int routeinfo = -1;
 
     /** 前のユニットの位置 */
     private Point[][] prevUnitLocation;
+
+
+    /** 駒の種類*/
+    public static final int GREEN   = 0;
+    public static final int BLACK   = 1;
+    public static final int RED     = 2;
+    public static final int YELLOW  = 3;
+
 
     /**　AI制御クラス **/
     private Controller_Nishinaka C_Nishinaka;
@@ -111,8 +138,18 @@ public class AI extends javax.swing.JFrame {
     /** AIの種類 **/
     private int AI_type;
 
-    private final Point Base0 = new Point(4,7);
-    private final Point Base1 = new Point(4,1);
+    public final Point Base0 = new Point(4,7);
+    public final Point Base1 = new Point(4,1);
+
+    /** タワーの位置 */
+    public static final Point tower_left = new Point(1, 4);
+    public static final Point tower_center = new Point(4, 4);
+    public static final Point tower_right = new Point(7, 4);
+
+
+    /** 勝っているチームのID */
+    public int victoryTeamID = -1;
+
 
     public static int PointValue2TrueValue(int v){
         return v+1;
@@ -160,6 +197,7 @@ public class AI extends javax.swing.JFrame {
         this.playingTeamID = -1; info.playingTeamID = -1;
         this.firstTeamID = -1; info.firstTeamID = -1;
         this.ternCount = 0; info.turnCount = 0;
+        this.boardType = BOARD_TYPE_UNDEFINED;
         this.gameCell = new Field[11][11]; info.gamecell = new Field[11][11];
         for(int i=0;i<11;i++){
             for(int j=0;j<11;j++){
@@ -502,6 +540,237 @@ public class AI extends javax.swing.JFrame {
         this.sthread.sendPlayMessage(unit[0],unit[1],unit[2]);
         
         //pre
+    }
+
+
+
+
+
+
+
+
+
+
+    /** 1VS1の対戦
+     * 戻り値：1:勝ち 0:負け 2:引き分け -1:エラー
+     * 引数：  GREEN:0, BLACK:1, RED:2, YELLOW:3
+     * */
+
+    public int onevs(int A_char, int E_char){
+
+        if(A_char == BLACK){
+            if(E_char == BLACK){
+                return 2;
+            }
+            else if (E_char == RED){
+                return 1;
+            }
+            else if (E_char == GREEN){
+                return 0;
+            }
+            else if (E_char == YELLOW){
+                return 2;
+            }
+        }
+
+        if(A_char == RED){
+            if(E_char == BLACK){
+                return 0;
+            }
+            else if (E_char == RED){
+                return 2;
+            }
+            else if (E_char == GREEN){
+                return 2;
+            }
+            else if (E_char == YELLOW){
+                return 1;
+            }
+        }
+        if(A_char == GREEN){
+            if(E_char == BLACK){
+                return 1;
+            }
+            else if (E_char == RED){
+                return 2;
+            }
+            else if (E_char == GREEN){
+                return 2;
+            }
+            else if (E_char == YELLOW){
+                return 0;
+            }
+        }
+        if(A_char == YELLOW){
+            if(E_char == BLACK){
+                return 2;
+            }
+            else if (E_char == RED){
+                return 0;
+            }
+            else if (E_char == GREEN){
+                return 1;
+            }
+            else if (E_char == YELLOW){
+                return 2;
+            }
+        }
+
+        return -1;
+    }
+
+    /** 2VS2の対戦
+     * 戻り値：1:勝ち 0:負け 2:引き分け -1:エラー
+     * 引数：  GREEN:0, BLACK:1, RED:2, YELLOW:3
+     * */
+    public int twovs(int A_char1, int A_char2, int E_char1, int E_char2){
+
+        if((A_char1 == BLACK && A_char2 == GREEN)||(A_char1 == GREEN && A_char2 == BLACK)){
+            if((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
+                return 2;
+            }
+            else if ((E_char1 == RED && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == RED)){
+                return 2;
+            }
+            else if ((E_char1 == GREEN && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == GREEN)){
+                return 0;
+            }
+            else if ((E_char1 == BLACK && E_char2 == RED)||(E_char1 == RED && E_char2 == BLACK)){
+                return 1;
+            }
+            else if ((E_char1 == BLACK && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == BLACK)){
+                return 2;
+            }
+            else if ((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
+                return 2;
+            }
+        }
+
+        if((A_char1 == BLACK && A_char2 == RED)||(A_char1 == RED && A_char2 == BLACK)){
+            if((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
+                return 1;
+            }
+            else if ((E_char1 == RED && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == RED)){
+                return 2;
+            }
+            else if ((E_char1 == GREEN && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == GREEN)){
+                return 2;
+            }
+            else if ((E_char1 == BLACK && E_char2 == RED)||(E_char1 == RED && E_char2 == BLACK)){
+                return 2;
+            }
+            else if ((E_char1 == BLACK && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == BLACK)){
+                return 2;
+            }
+            else if ((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
+                return 1;
+            }
+        }
+        if((A_char1 == GREEN && A_char2 == RED)||(A_char1 == RED && A_char2 == GREEN)){
+            if((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
+                return 2;
+            }
+            else if ((E_char1 == RED && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == RED)){
+                return 2;
+            }
+            else if ((E_char1 == GREEN && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == GREEN)){
+                return 2;
+            }
+            else if ((E_char1 == BLACK && E_char2 == RED)||(E_char1 == RED && E_char2 == BLACK)){
+                return 2;
+            }
+            else if ((E_char1 == BLACK && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == BLACK)){
+                return 2;
+            }
+            else if ((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
+                return 2;
+            }
+        }
+        if((A_char1 == BLACK && A_char2 == YELLOW)||(A_char1 == YELLOW && A_char2 == BLACK)){
+            if((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
+                return 2;
+            }
+            else if ((E_char1 == RED && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == RED)){
+                return 2;
+            }
+            else if ((E_char1 == GREEN && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == GREEN)){
+                return 2;
+            }
+            else if ((E_char1 == BLACK && E_char2 == RED)||(E_char1 == RED && E_char2 == BLACK)){
+                return 2;
+            }
+            else if ((E_char1 == BLACK && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == BLACK)){
+                return 2;
+            }
+            else if ((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
+                return 2;
+            }
+        }
+        if((A_char1 == GREEN && A_char2 == YELLOW)||(A_char1 == YELLOW && A_char2 == GREEN)){
+            if((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
+                return 0;
+            }
+            else if ((E_char1 == RED && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == RED)){
+                return 2;
+            }
+            else if ((E_char1 == GREEN && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == GREEN)){
+                return 2;
+            }
+            else if ((E_char1 == BLACK && E_char2 == RED)||(E_char1 == RED && E_char2 == BLACK)){
+                return 2;
+            }
+            else if ((E_char1 == BLACK && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == BLACK)){
+                return 2;
+            }
+            else if ((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
+                return 0;
+            }
+        }
+        if((A_char1 == RED && A_char2 == YELLOW)||(A_char1 == YELLOW && A_char2 == RED)){
+            if((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
+                return 2;
+            }
+            else if ((E_char1 == RED && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == RED)){
+                return 2;
+            }
+            else if ((E_char1 == GREEN && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == GREEN)){
+                return 0;
+            }
+            else if ((E_char1 == BLACK && E_char2 == RED)||(E_char1 == RED && E_char2 == BLACK)){
+                return 1;
+            }
+            else if ((E_char1 == BLACK && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == BLACK)){
+                return 2;
+            }
+            else if ((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
+                return 2;
+            }
+        }
+
+        return -1;
+    }
+
+    /** 得点差 */
+    public int getPoint(){
+        int i,j;
+        i=teamPoint[0]-teamPoint[1];
+        if(i>0)  victoryTeamID=0;
+        else if(i<0)  victoryTeamID=1;
+
+        return Math.abs(i);
+    }
+
+    /** 最も近いタワー */
+    public Point getNearestTower(Point pos) {
+        int i, j, k;
+        i = distance(pos, tower_left);
+        j = distance(pos, tower_center);
+        k = distance(pos, tower_right);
+
+        if (i < j && i < k) return (tower_left);
+        else if (j < i && j < k) return (tower_center);
+        else if (k < i && k < j) return (tower_right);
+        else return (tower_center);
     }
 
 }

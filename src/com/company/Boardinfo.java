@@ -84,6 +84,12 @@ public class Boardinfo {
     public final Point Base0 = new Point(4,7);
     public final Point Base1 = new Point(4,1);
 
+    /** タワーの位置 */
+    public static final Point tower_left = new Point(1, 4);
+    public static final Point tower_center = new Point(4, 4);
+    public static final Point tower_right = new Point(7, 4);
+    public static final Point tower[] = {tower_left, tower_center, tower_right};
+
     /** 前のユニットの位置 */
     public Point[][] prevUnitLocation;
 
@@ -161,23 +167,15 @@ public class Boardinfo {
 
     /** 最も近いタワー */
     public Point getNearestTower(Point pos) {
-        Point t1 = new Point(1, 4);
-        Point t2 = new Point(4, 4);
-        Point t3 = new Point(7, 4);
-
         int i, j, k;
-        i = distance(pos, t1);
-        j = distance(pos, t2);
-        k = distance(pos, t3);
+        i = distance(pos, tower_left);
+        j = distance(pos, tower_center);
+        k = distance(pos, tower_right);
 
-        if (i < j && i < k) return (t1);
-        else if (j < i && j < k) return (t2);
-        else if (k < i && k < j) return (t3);
-        else return (t2);
-    }
-    /** タワーをどちらが占拠しているかを示す配列を取得する */
-    public int[] getTowerHold() {
-        return this.towerHold;
+        if (i < j && i < k) return (tower_left);
+        else if (j < i && j < k) return (tower_center);
+        else if (k < i && k < j) return (tower_right);
+        else return (tower_center);
     }
 
     /** 次の手がどちらかを返す */
