@@ -140,8 +140,9 @@ public class Controller_Nishinaka {
             case 0:
                 switch (STATE) {
                     case FIELD_0_TOWER_0_CAMP_2:{
-                        unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
-                        unit[0][0] = setupUnit(1)[1]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                        unit[0][0] = setupUnit(0)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                        unit[1][0] = setupUnit(0)[1]; unit[1][1] = Route001.x; unit[1][2] = Route001.y;
+                        routeinfo = Route001_;
                         break;
                     }
                     case FIELD_0_TOWER_1_CAMP_1: {
@@ -149,37 +150,37 @@ public class Controller_Nishinaka {
                         enableBaseUnit();
                         if(tower[0] == 1){
                             if (base_unitpair == BLACK_YELLOW) {
-                                unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
-                                unit[0][0] = setupUnit(1)[1]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                                unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route011.x; unit[0][2] = Route011.y;
+                                unit[1][0] = setupUnit(1)[1]; unit[1][1] = Route011.x; unit[1][2] = Route011.y;
                                 break;
                             }
                             if (base_unitpair == RED_GREEN) {
-                                unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
-                                unit[0][0] = setupUnit(1)[1]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                                unit[0][0] = setupUnit(0)[0]; unit[0][1] = Route011.x; unit[0][2] = Route011.y;
+                                unit[1][0] = setupUnit(1)[1]; unit[0][1] = Route011.x; unit[0][2] = Route011.y;
                                 break;
                             }
                         }
                         if(tower[1] == 1){
                             if (base_unitpair == BLACK_YELLOW) {
                                 unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
-                                unit[0][0] = setupUnit(1)[1]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                                unit[1][0] = setupUnit(1)[1]; unit[1][1] = Route001.x; unit[1][2] = Route001.y;
                                 break;
                             }
                             if (base_unitpair == RED_GREEN) {
-                                unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
-                                unit[0][0] = setupUnit(1)[1]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                                unit[0][0] = setupUnit(0)[0]; unit[0][1] = Route021.x; unit[0][2] = Route021.y;
+                                unit[1][0] = setupUnit(0)[1]; unit[1][1] = Route021.x; unit[1][2] = Route021.y;
                                 break;
                             }
                         }
                         if(tower[2] == 1){
                             if (base_unitpair == BLACK_YELLOW) {
                                 unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
-                                unit[0][0] = setupUnit(1)[1]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                                unit[1][0] = setupUnit(1)[1]; unit[1][1] = Route001.x; unit[1][2] = Route001.y;
                                 break;
                             }
                             if (base_unitpair == RED_GREEN) {
-                                unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
-                                unit[0][0] = setupUnit(1)[1]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                                unit[0][0] = setupUnit(0)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                                unit[1][0] = setupUnit(0)[1]; unit[1][1] = Route001.x; unit[1][2] = Route001.y;
                                 break;
                             }
                         }
@@ -400,7 +401,7 @@ public class Controller_Nishinaka {
            }
         } else if (info.MyTeamID == 1) {
             for (int i = 0; i < 4; i++) {
-                if (info.unitLocation[info.MyTeamID][i] == Base0){
+                if (info.unitLocation[info.MyTeamID][i] == Base1){
                     if (i == 0||i == 2){
                         base_unitpair = RED_GREEN;
                     }
