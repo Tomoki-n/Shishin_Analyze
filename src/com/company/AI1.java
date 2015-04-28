@@ -17,20 +17,22 @@ import java.util.regex.Pattern;
 public class AI1 extends javax.swing.JFrame {
 
     public static final int DEFALUTPORT = 13306;
-    public static Color BGColor = new Color(236,233,216);
+    public static Color BGColor = new Color(236, 233, 216);
     //public static int ObstacleCount = 4;
 
-    /** ２点の距離を計算（上下左右、斜めのどこでも１歩） */
-    public static int distance(Point a,Point b){
-        if(a.x == b.x){
+    /**
+     * ２点の距離を計算（上下左右、斜めのどこでも１歩）
+     */
+    public static int distance(Point a, Point b) {
+        if (a.x == b.x) {
             return Math.abs(a.y - b.y);
-        } else if(a.y == b.y){
+        } else if (a.y == b.y) {
             return Math.abs(a.x - b.x);
         } else {
             //斜めに近づく場合は長い方と同じだけで大丈夫
             int xdef = Math.abs(a.x - b.x);
             int ydef = Math.abs(a.y - b.y);
-            if(xdef > ydef){
+            if (xdef > ydef) {
                 return xdef;
             } else {
                 return ydef;
@@ -39,21 +41,37 @@ public class AI1 extends javax.swing.JFrame {
     }
 
     //盤面のタイプ
-    /** 現在のボードのタイプ */
+    /**
+     * 現在のボードのタイプ
+     */
     public int boardType;
-    /** 盤面のタイプが未確定 */
+    /**
+     * 盤面のタイプが未確定
+     */
     public static final int BOARD_TYPE_UNDEFINED = -1;
-    /** 盤面がケース1 */
+    /**
+     * 盤面がケース1
+     */
     public static final int BOARD_TYPE_A = 1;
-    /** 盤面がケース2 */
+    /**
+     * 盤面がケース2
+     */
     public static final int BOARD_TYPE_B = 2;
-    /** 盤面がケース3 */
+    /**
+     * 盤面がケース3
+     */
     public static final int BOARD_TYPE_C = 3;
-    /** 盤面がケース4 */
+    /**
+     * 盤面がケース4
+     */
     public static final int BOARD_TYPE_D = 4;
-    /** 盤面がケース1もしくは2 */
+    /**
+     * 盤面がケース1もしくは2
+     */
     public static final int BOARD_TYPE_AB = 5;
-    /** 盤面がケース3もしくは4 */
+    /**
+     * 盤面がケース3もしくは4
+     */
     public static final int BOARD_TYPE_CD = 6;
 
     //状態
@@ -64,99 +82,234 @@ public class AI1 extends javax.swing.JFrame {
     public static final int STATE_CALC = 6;
     public static final int STATE_FINISH = 7;
 
-    /** 順番カウント用 */
+    /**
+     * 順番カウント用
+     */
     private int turnState = -1;
-    public static final int STATE_PLAY_TURN1 = 11;
-    public static final int STATE_PLAY_TURN2 = 12;
-    public static final int STATE_PLAY_TURN3 = 13;
-    public static final int STATE_PLAY_TURN4 = 14;
+
 
     //閾値設定
-    /** ゲーム終了の点数 */
+    /**
+     * ゲーム終了の点数
+     */
     private static final int MAXPOINT = 50;
-    /** 無得点の最大ターン数 */
+    /**
+     * 無得点の最大ターン数
+     */
     private static final int NOPOINTTIME = 10;
 
     /** ボードの状態 */
-    public Boardinfo info;
+    //public Boardinfo info;
 
-    /** ボードの状態 */
+    /**
+     * ボードの状態
+     */
     private int state = STATE_WAITINGPLAYER;
-    /** どちらのプレイヤーがプレイ中か　0または1になる。-1はゲーム中ではない状態 */
+    /**
+     * どちらのプレイヤーがプレイ中か　0または1になる。-1はゲーム中ではない状態
+     */
     private int playingTeamID = -1;
-    /** 先攻プレイヤーはどちらか */
+    /**
+     * 先攻プレイヤーはどちらか
+     */
     private int firstTeamID = -1;
-    /** ターン数*/
+    /**
+     * ターン数
+     */
     private int ternCount;
 
-    /** 自分の名前 */
+    /**
+     * 自分の名前
+     */
     private String myName;
-    /** サーバのアドレス */
+    /**
+     * サーバのアドレス
+     */
     private String serverIP;
-    /** サーバポート */
+    /**
+     * サーバポート
+     */
     private int serverPort;
-    /** サーバ待ち受けスレッド*/
+    /**
+     * サーバ待ち受けスレッド
+     */
     private Connection1 sthread;
-    /** セル用配列 */
+    /**
+     * セル用配列
+     */
     private Field[][] gameCell;
-    /** ユニットの位置 */
+    /**
+     * ユニットの位置
+     */
     private Point[][] unitLocation;
-    /** 塔の保持状態 */
+    /**
+     * 塔の保持状態
+     */
     private int[] towerHold;
     private int towerCount = 3;
-    /** チームの得点 */
+    /**
+     * チームの得点
+     */
     private int[] teamPoint;
-    /** 自分のチーム番号 */
+    /**
+     * 自分のチーム番号
+     */
     private int MyTeamID;
 
 
     private boolean nextenable = false;
     private int[] nextorder;
-    private int routeinfo = -1;
+    //private int routeinfo = -1;
 
-    /** 前のユニットの位置 */
+    /**
+     * 前のユニットの位置
+     */
     private Point[][] prevUnitLocation;
 
 
-    /** 駒の種類*/
-    public static final int GREEN   = 0;
-    public static final int BLACK   = 1;
-    public static final int RED     = 2;
-    public static final int YELLOW  = 3;
+    /**
+     * 駒の種類
+     */
+    public static final int GREEN = 0;
+    public static final int BLACK = 1;
+    public static final int RED = 2;
+    public static final int YELLOW = 3;
 
 
-    /**　AI制御クラス **/
-    private Controller_Nishinaka C_Nishinaka;
+    /**
+     * 手の種類
+     */
+    public int STATE;
 
-    private Controller_Hosono C_Hosono;
+    public static final int FIRST_TURN = 1;
+    public static final int FIRST_MYTURN1 = 01;
+    public static final int FIRST_MYTURN2 = 02;
+    public static final int MYTURN_1 = 11;
+    public static final int MYTURN_2 = 12;
 
-    private Controller_Higuchi C_Higuchi;
 
-    private Controller_Demo C_Demo;
+    //ターン管理
+    public static final int STATE_PLAY_TURN1 = 11;
+    public static final int STATE_PLAY_TURN2 = 12;
+    public static final int STATE_PLAY_TURN3 = 13;
+    public static final int STATE_PLAY_TURN4 = 14;
 
 
-    /** AIの種類 **/
+    //コマの状態
+    public static final int FIELD_0_TOWER_0_CAMP_2 = 11;
+    public static final int FIELD_0_TOWER_1_CAMP_1 = 12;
+    public static final int FIELD_0_TOWER_2_CAMP_0 = 13;
+    public static final int FIELD_1_TOWER_0_CAMP_1 = 14;
+    public static final int FIELD_1_TOWER_1_CAMP_0 = 15;
+    public static final int FIELD_2_TOWER_0_CAMP_0 = 16;
+
+
+    //タワー位置
+    public static final Point Tower0 = new Point(1, 4);
+    public static final Point Tower1 = new Point(4, 4);
+    public static final Point Tower2 = new Point(7, 4);
+
+
+    //上側：本陣位置
+    //public static final Point Base0 = new Point(4, 1);
+
+    public static final Point Route001 = new Point(3, 6);
+    public static final Point Route002 = new Point(2, 5);
+    public static final Point Route003 = new Point(1, 4);
+
+    public static final Point Route011 = new Point(3, 6);
+    public static final Point Route012 = new Point(3, 5);
+    public static final Point Route013 = new Point(4, 4);
+
+    public static final Point Route021 = new Point(5, 6);
+    public static final Point Route022 = new Point(5, 5);
+    public static final Point Route023 = new Point(4, 4);
+
+    public static final Point Route031 = new Point(5, 6);
+    public static final Point Route032 = new Point(6, 5);
+    public static final Point Route033 = new Point(7, 4);
+
+    public static final int Route001_ = 101;
+    public static final int Route002_ = 102;
+    public static final int Route003_ = 103;
+
+    public static final int Route011_ = 111;
+    public static final int Route012_ = 112;
+    public static final int Route013_ = 113;
+
+    public static final int Route021_ = 121;
+    public static final int Route022_ = 122;
+    public static final int Route023_ = 123;
+
+    public static final int Route031_ = 131;
+    public static final int Route032_ = 132;
+    public static final int Route033_ = 133;
+
+
+    //下側：本陣位置
+    //public static final Point Base1 = new Point(4, 7);
+
+    public static final int Route101_ = 101;
+    public static final int Route102_ = 102;
+    public static final int Route103_ = 103;
+
+    public static final int Route111_ = 111;
+    public static final int Route112_ = 112;
+    public static final int Route113_ = 113;
+
+    public static final int Route121_ = 121;
+    public static final int Route122_ = 122;
+    public static final int Route123_ = 123;
+
+    public static final int Route131_ = 131;
+    public static final int Route132_ = 132;
+    public static final int Route133_ = 134;
+
+
+    public int field_count = 0;
+    public int base_count = 0;
+    public int tower_count = 0;
+
+    public int[] unit;
+    public int[] tower;
+
+    public static final int RED_GREEN = 100;
+    public static final int BLACK_YELLOW = 101;
+
+    public int base_unitpair;
+    public int routeinfo = -1;
+
+
+    /**
+     * AIの種類 *
+     */
     private int AI_type;
 
-    public final Point Base0 = new Point(4,7);
-    public final Point Base1 = new Point(4,1);
+    public final Point Base0 = new Point(4, 7);
+    public final Point Base1 = new Point(4, 1);
 
-    /** タワーの位置 */
+    /**
+     * タワーの位置
+     */
     public static final Point tower_left = new Point(1, 4);
     public static final Point tower_center = new Point(4, 4);
     public static final Point tower_right = new Point(7, 4);
 
 
-    /** 勝っているチームのID */
+    /**
+     * 勝っているチームのID
+     */
     public int victoryTeamID = -1;
 
 
-    public static int PointValue2TrueValue(int v){
-        return v+1;
+    public static int PointValue2TrueValue(int v) {
+        return v + 1;
     }
 
-    /** Creates new form GameField */
-    public AI1(String address,String type,String stype) {
+    /**
+     * Creates new form GameField
+     */
+    public AI1(String address, String type, String stype) {
         this.serverIP = address;
         AI_type = Integer.parseInt(type);
         System.out.println("init");
@@ -165,24 +318,26 @@ public class AI1 extends javax.swing.JFrame {
         this.sthread.sendName();
     }
 
-    /** 状態をすべてリセット */
+    /**
+     * 状態をすべてリセット
+     */
     public void resetAll() {
         this.state = STATE_WAITINGPLAYER;
         //名前の入力
         this.myName = null;
         this.myName = "TajimaLab";
-        System.out.println("Playname:"+myName);
-        if(this.myName == null){
+        System.out.println("Playname:" + myName);
+        if (this.myName == null) {
             System.exit(0);
         }
 
         this.serverPort = DEFALUTPORT;
 
         //サーバに接続する
-        this.sthread = new Connection1(this.myName,this);
+        this.sthread = new Connection1(this.myName, this);
         try {
             boolean connect = this.sthread.connectToServer(this.serverIP, this.serverPort);
-            if(connect == false){
+            if (connect == false) {
                 this.addMessage("サーバへの接続に失敗しました。");
                 System.exit(0);
             }
@@ -194,124 +349,135 @@ public class AI1 extends javax.swing.JFrame {
             System.exit(0);
         }
         //正しく接続できたら処理開始
-        this.playingTeamID = -1; info.playingTeamID = -1;
-        this.firstTeamID = -1; info.firstTeamID = -1;
-        this.ternCount = 0; info.turnCount = 0;
+        this.playingTeamID = -1;
+        this.firstTeamID = -1;
+        this.ternCount = 0;
         this.boardType = BOARD_TYPE_UNDEFINED;
 
         this.unitLocation = new Point[2][4];
-        for(int i=0;i<4;i++){
-            this.unitLocation[0][i] = new Point(4,7);info.unitLocation[0][i] = new Point(4,7);
-            this.unitLocation[1][i] = new Point(4,1);info.unitLocation[1][i] = new Point(4,7);
+        for (int i = 0; i < 4; i++) {
+            this.unitLocation[0][i] = new Point(4, 7);
+            this.unitLocation[1][i] = new Point(4, 1);
+
+            this.towerHold = new int[towerCount];
+
+            for (int j = 0; i < towerCount; i++) {
+                this.towerHold[j] = -1;
+
+            }
+
+            this.teamPoint = new int[2];
+            this.teamPoint[0] = 0;
+            this.teamPoint[1] = 0;
+
+
+            this.resetTurnState();
+
         }
-
-        this.towerHold = new int[towerCount];
-        info.towerHold = new int[towerCount];
-        for(int i=0;i<towerCount;i++){
-            this.towerHold[i] = -1;
-            info.towerHold[1] = -1;
-        }
-
-        this.teamPoint = new int[2];
-        this.teamPoint[0] = 0;
-        this.teamPoint[1] = 0;
-
-        info.teamPoint = new int[2];
-        info.teamPoint[0] = 0;
-        info.teamPoint[1] = 0;
-
-        this.resetTurnState();
-
-
     }
 
-    /** ターンの１手目に戻す */
-    public void resetTurnState(){
+    /**
+     * ターンの１手目に戻す
+     */
+    public void resetTurnState() {
         this.turnState = STATE_PLAY_TURN1;
         this.ternCount++;
-        info.turnState = STATE_PLAY_TURN1;
-        info.turnCount++;
-
-    }
-
-    /** 表示項目の一新 */
-    private void paintComponents(){
 
 
     }
 
-    /** 先行かどうかを返す */
-    public boolean isFirstPlayer(int myID){
-        if(this.firstTeamID == myID){
+    /**
+     * 表示項目の一新
+     */
+    private void paintComponents() {
+
+
+    }
+
+    /**
+     * 先行かどうかを返す
+     */
+    public boolean isFirstPlayer(int myID) {
+        if (this.firstTeamID == myID) {
             return true;
         } else {
             return false;
         }
     }
 
-    /** 先攻、後攻の切り替え */
-    public void changeFirstTeam(){
-        this.firstTeamID = (this.firstTeamID + 1 )%2;
-        info.firstTeamID = (this.firstTeamID + 1 )%2;
+    /**
+     * 先攻、後攻の切り替え
+     */
+    public void changeFirstTeam() {
+        this.firstTeamID = (this.firstTeamID + 1) % 2;
+
     }
 
-    /** 手番のプレイヤーを変更 */
-    public void setPlayingTeamID(int i){
+    /**
+     * 手番のプレイヤーを変更
+     */
+    public void setPlayingTeamID(int i) {
         this.playingTeamID = i;
         this.state = STATE_PLAY;
-        info.playingTeamID = i;
-        info.state = STATE_PLAY;
+
 
     }
 
 
-    /** チーム名の変更 */
-    public void setTeamName(int teamNumber,String teamName){
-        if(teamNumber == 0){
-        }
-        else if(teamNumber == 1){
+    /**
+     * チーム名の変更
+     */
+    public void setTeamName(int teamNumber, String teamName) {
+        if (teamNumber == 0) {
+        } else if (teamNumber == 1) {
         }
         this.paintComponents();
     }
 
-    /** 次の手がどちらかを返す */
-    public int whoIsPlay(){
-        if(this.turnState == STATE_PLAY_TURN1){
+    /**
+     * 次の手がどちらかを返す
+     */
+    public int whoIsPlay() {
+        if (this.turnState == STATE_PLAY_TURN1) {
             return this.firstTeamID;
-        } else if(this.turnState == STATE_PLAY_TURN2){
-            return (this.firstTeamID+1)%2;
-        } else if(this.turnState == STATE_PLAY_TURN3){
-            return (this.firstTeamID+1)%2;
-        } else if(this.turnState == STATE_PLAY_TURN4){
+        } else if (this.turnState == STATE_PLAY_TURN2) {
+            return (this.firstTeamID + 1) % 2;
+        } else if (this.turnState == STATE_PLAY_TURN3) {
+            return (this.firstTeamID + 1) % 2;
+        } else if (this.turnState == STATE_PLAY_TURN4) {
             return this.firstTeamID;
         }
         return -1;
     }
 
 
-    /** 手が打たれたことをカウントする */
-    public void doPlay(){
-        if(this.turnState == STATE_PLAY_TURN1){
+    /**
+     * 手が打たれたことをカウントする
+     */
+    public void doPlay() {
+        if (this.turnState == STATE_PLAY_TURN1) {
             this.turnState = STATE_PLAY_TURN2;
-        } else if(this.turnState == STATE_PLAY_TURN2){
+        } else if (this.turnState == STATE_PLAY_TURN2) {
             this.turnState = STATE_PLAY_TURN3;
-        } else if(this.turnState == STATE_PLAY_TURN3){
+        } else if (this.turnState == STATE_PLAY_TURN3) {
             this.turnState = STATE_PLAY_TURN4;
-        } else if(this.turnState == STATE_PLAY_TURN4){
+        } else if (this.turnState == STATE_PLAY_TURN4) {
             this.turnState = -1;
         }
     }
 
-    /** 自分のIDをセット */
-    public int setMyTeamID(int id){
-        if(this.state != STATE_WAITINGPLAYER){
+    /**
+     * 自分のIDをセット
+     */
+    public int setMyTeamID(int id) {
+        if (this.state != STATE_WAITINGPLAYER) {
             return -1;
         }
         this.MyTeamID = id;
-        this.setTeamName(this.MyTeamID,this.myName);
+        this.setTeamName(this.MyTeamID, this.myName);
 
-        for(int x=-1;x<10;x++){
-            for(int y=-1;y<10;y++){
+        for (int x = -1; x < 10; x++) {
+            for (int y = -1; y < 10; y++) {
 
             }
         }
@@ -319,32 +485,38 @@ public class AI1 extends javax.swing.JFrame {
         return 0;
     }
 
-    /** 相手ユーザを追加 */
+    /**
+     * 相手ユーザを追加
+     */
     public int adversHasCome(String name) {
-        if(this.state != STATE_WAITINGPLAYER){
+        if (this.state != STATE_WAITINGPLAYER) {
             return -1;
         }
-        int otherid = (this.MyTeamID+1)%2;
-        this.setTeamName(otherid,name);
+        int otherid = (this.MyTeamID + 1) % 2;
+        this.setTeamName(otherid, name);
         this.firstTeamID = 0;
         this.state = STATE_PLAY;
         paintComponents();
         return 0;
     }
 
-    /** TeamID のユーザが切断*/
+    /**
+     * TeamID のユーザが切断
+     */
     public void disconnectUser(int TeamID) {
         this.state = STATE_WAITINGPLAYER;
-        if(TeamID == 0){
+        if (TeamID == 0) {
 
-        } else if(TeamID == 1){
+        } else if (TeamID == 1) {
 
         }
     }
 
 
-    /** 現在状態の取得 */
-    public int getStateNumber(){
+    /**
+     * 現在状態の取得
+     */
+    public int getStateNumber() {
         return this.state;
     }
 
@@ -352,159 +524,72 @@ public class AI1 extends javax.swing.JFrame {
     public static Pattern OBSTACLEPattern = Pattern.compile("406 OBSTACLE ([0-5]) ([0-8]) ([0-8])");
     public static Pattern TOWERPattern = Pattern.compile("402 TOWER ([0-5]) ([0-1])");
     public static Pattern SCOREPattern = Pattern.compile("403 SCORE ([0-1]) ([0-9]+)");
-    /** ボード状態をまとめて設定 */
+
+    /**
+     * ボード状態をまとめて設定
+     */
     public void setBordState(ArrayList<String> list) {
-        for(String dataline:list){
+        for (String dataline : list) {
             Matcher umc = UNITPattern.matcher(dataline);
             Matcher omc = OBSTACLEPattern.matcher(dataline);
             Matcher tmc = TOWERPattern.matcher(dataline);
             Matcher smc = SCOREPattern.matcher(dataline);
 
-            if(umc.matches()){
+            if (umc.matches()) {
                 int team = Integer.parseInt(umc.group(1));
                 int unitnum = Integer.parseInt(umc.group(2));
                 int xpos = Integer.parseInt(umc.group(3));
                 int ypos = Integer.parseInt(umc.group(4));
-                Point pos = new Point(xpos,ypos);
-                this.prevUnitLocation[team][unitnum] = this.unitLocation[team][unitnum];
-                info.prevUnitLocation[team][unitnum] = this.prevUnitLocation[team][unitnum];
+                Point pos = new Point(xpos, ypos);
+                //this.prevUnitLocation[team][unitnum] = this.unitLocation[team][unitnum];
+
                 this.unitLocation[team][unitnum] = pos;
-                info.unitLocation[team][unitnum] = pos;
-            } else if(omc.matches()){
+
+            } else if (omc.matches()) {
                 int ovstnum = Integer.parseInt(omc.group(1));//障害物ID
                 int xpos = Integer.parseInt(omc.group(2));
                 int ypos = Integer.parseInt(omc.group(3));
-                Point pos = new Point(xpos,ypos);
-            } else if(tmc.matches()){
+                Point pos = new Point(xpos, ypos);
+            } else if (tmc.matches()) {
                 int unitnum = Integer.parseInt(tmc.group(1));
                 int team = Integer.parseInt(tmc.group(2));
                 this.towerHold[unitnum] = team;
-                info.towerHold[unitnum] = team;
-            } else if(smc.matches()){
+
+            } else if (smc.matches()) {
                 int team = Integer.parseInt(smc.group(1));
                 int value = Integer.parseInt(smc.group(2));
                 this.teamPoint[team] = value;
-                info.teamPoint[team] = value;
+
             }
         }
         this.paintComponents();
     }
 
+    int test = 1;
+    int units[][] = new int[2][3];
 
-    /** ユーザへのメッセージ表示 */
+    /**
+     * ユーザへのメッセージ表示
+     */
     public void addMessage(String msg) {
 
-        if(this.sthread.state == STATE_PLAY){
+        if (this.sthread.state == STATE_PLAY) {
 
-            switch (AI_type){
-                case 1:{
-                    ai1();break;
-                }
-                case 2:{
-                    ai2();break;
-                }
-                case 3:{
-                    ai3();break;
-                }
-                case 4:{
-                    ai_demo();break;
-                }
-                default:{
-                    ai1();
-                    break;
-                }
+            //int unit[][] = new int[2][3];
+
+            if (test == 1) {
+                init();
+                units = UnitOrder();
+                this.sthread.sendPlayMessage(units[0][0], units[0][1], units[0][2]);
+                test = 2;
             }
-        }
-
-        System.out.println(msg);
-    }
-
-        private int selectedUnit = -1;
-    void selectPoint(int x, int y) {
-        if(this.state == STATE_PLAY_UNITSELECT){
-            this.state = STATE_PLAY;
-            this.sthread.sendPlayMessage(this.selectedUnit,x,y);
-        }
-    }
-
-    void selectUnit(int unitID) {
-        if(this.state == STATE_PLAY){
-            if(this.MyTeamID == this.playingTeamID){
-                this.state = STATE_PLAY_UNITSELECT;
-                this.selectedUnit = unitID;
-                this.addMessage(unitID + "が選択されました。移動先をクリックしてください。");
-
+            if (test == 2) {
+                this.sthread.sendPlayMessage(units[1][0], units[1][1], units[1][2]);
             }
+
         }
-    }
-
-
-    public void ai1(){
-        C_Higuchi = new Controller_Higuchi(info);
-
-        int unit[] = new int[3];
-
-        unit = C_Higuchi.UnitOrder();
-
-        this.sthread.sendPlayMessage(unit[0],unit[1],unit[2]);
-
-        //higuchi
-    }
-
-    public void ai2(){
-        if(nextenable == false) {
-            C_Nishinaka = new Controller_Nishinaka(info,routeinfo);
-
-
-            int unit[][] = new int[2][3];
-            int nextorder[] = new int [3];
-           while (true){
-                unit = C_Nishinaka.UnitOrder();
-                routeinfo = C_Nishinaka.Send_Routeinfo();
-                if (unit[0][0]!=0||unit[0][1]!=0||unit[0][2]!=0)break;
-           }
-            nextorder[0] = unit[1][0]; nextorder[1] = unit[1][1]; nextorder[2] = unit[1][2];
-            nextenable = true;
-            this.sthread.sendPlayMessage(unit[0][0], unit[0][1], unit[0][2]);
-         }
-        if (nextenable == true) {
-            nextenable = false;
-            this.sthread.sendPlayMessage(nextorder[0], nextorder[1], nextorder[2]);
-        }
-   }
-
-    public void ai3(){
-        C_Hosono = new Controller_Hosono(info);
-
-        int unit[] = new int[3];
-
-        unit = C_Hosono.UnitOrder();
-
-        this.sthread.sendPlayMessage(unit[0],unit[1],unit[2]);
-
-        //Hosono
-    }
-
-    public void ai_demo(){
-        C_Demo = new Controller_Demo(info);
-
-        int unit[] = new int[3];
-
-        unit = C_Demo.UnitOrder();
-
-        this.sthread.sendPlayMessage(unit[0],unit[1],unit[2]);
-        
-        //pre
-    }
-
-
-
-
-
-
-
-
-
+    System.out.println(msg);
+}
 
     /** 1VS1の対戦
      * 戻り値：1:勝ち 0:負け 2:引き分け -1:エラー
@@ -727,5 +812,339 @@ public class AI1 extends javax.swing.JFrame {
         else if (k < i && k < j) return (tower_right);
         else return (tower_center);
     }
+
+    public int[][] UnitOrder() {
+
+        /** 0:コマの種類　1:X座標　2:Y座標 3:ルート**/
+        int unit[][] = new int[2][4];
+
+        switch (this.MyTeamID) {
+            case 0:
+                switch (STATE) {
+                    case FIRST_MYTURN1:{
+                        unit[0][0] = setupUnit(0)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                        unit[1][0] = setupUnit(0)[1]; unit[1][1] = Route001.x; unit[1][2] = Route001.y;
+                        routeinfo = Route001_;
+                        break;
+                    }
+                    case FIRST_MYTURN2:{
+                        unit[0][0] = setupUnit(0)[0]; unit[0][1] = Route002.x; unit[0][2] = Route002.y;
+                        unit[1][0] = setupUnit(0)[1]; unit[1][1] = Route002.x; unit[1][2] = Route002.y;
+                        routeinfo = Route001_;
+                        break;
+                    }
+
+                    case FIELD_0_TOWER_0_CAMP_2:{
+                        unit[0][0] = setupUnit(0)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                        unit[1][0] = setupUnit(0)[1]; unit[1][1] = Route001.x; unit[1][2] = Route001.y;
+                        routeinfo = Route001_;
+                        break;
+                    }
+                    case FIELD_0_TOWER_1_CAMP_1: {
+                        sendtowerhold();
+                        enableBaseUnit();
+                        if(tower[0] == 1){
+                            if (base_unitpair == BLACK_YELLOW) {
+                                unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route011.x; unit[0][2] = Route011.y;
+                                unit[1][0] = setupUnit(1)[1]; unit[1][1] = Route011.x; unit[1][2] = Route011.y;
+                                break;
+                            }
+                            if (base_unitpair == RED_GREEN) {
+                                unit[0][0] = setupUnit(0)[0]; unit[0][1] = Route011.x; unit[0][2] = Route011.y;
+                                unit[1][0] = setupUnit(1)[1]; unit[0][1] = Route011.x; unit[0][2] = Route011.y;
+                                break;
+                            }
+                        }
+                        if(tower[1] == 1){
+                            if (base_unitpair == BLACK_YELLOW) {
+                                unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                                unit[1][0] = setupUnit(1)[1]; unit[1][1] = Route001.x; unit[1][2] = Route001.y;
+                                break;
+                            }
+                            if (base_unitpair == RED_GREEN) {
+                                unit[0][0] = setupUnit(0)[0]; unit[0][1] = Route021.x; unit[0][2] = Route021.y;
+                                unit[1][0] = setupUnit(0)[1]; unit[1][1] = Route021.x; unit[1][2] = Route021.y;
+                                break;
+                            }
+                        }
+                        if(tower[2] == 1){
+                            if (base_unitpair == BLACK_YELLOW) {
+                                unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                                unit[1][0] = setupUnit(1)[1]; unit[1][1] = Route001.x; unit[1][2] = Route001.y;
+                                break;
+                            }
+                            if (base_unitpair == RED_GREEN) {
+                                unit[0][0] = setupUnit(0)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                                unit[1][0] = setupUnit(0)[1]; unit[1][1] = Route001.x; unit[1][2] = Route001.y;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    case FIELD_0_TOWER_2_CAMP_0: {
+                        if(tower[0] == 1){
+                            if (base_unitpair == BLACK_YELLOW) {
+                                unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                                unit[0][0] = setupUnit(1)[1]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                                break;
+                            }
+                            if (base_unitpair == RED_GREEN) {
+                                unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                                unit[0][0] = setupUnit(1)[1]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                                break;
+                            }
+                        }
+                        if(tower[1] == 1){
+                            if (base_unitpair == BLACK_YELLOW) {
+                                unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                                unit[0][0] = setupUnit(1)[1]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                                break;
+                            }
+                            if (base_unitpair == RED_GREEN) {
+                                unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                                unit[0][0] = setupUnit(1)[1]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    case FIELD_1_TOWER_0_CAMP_1:
+                        if(routeinfo == Route001_){
+
+                        }
+                        if(routeinfo == Route002_){
+
+                        }
+                        if(routeinfo == Route003_){
+
+                        }
+                        if(routeinfo == Route111_){
+
+                        }
+                        if(routeinfo == Route112_){
+
+                        }
+                        if(routeinfo == Route113_){
+
+                        }
+                        if(routeinfo == Route121_){
+
+                        }
+                        if(routeinfo == Route122_){
+
+                        }
+                        if(routeinfo == Route123_){
+
+                        }
+                        if(routeinfo == Route131_){
+
+                        }
+                        if(routeinfo == Route132_){
+
+                        }
+                        if(routeinfo == Route133_){
+
+                        }
+                    case FIELD_1_TOWER_1_CAMP_0:
+                        if(routeinfo == Route001_){
+
+                        }
+                        if(routeinfo == Route002_){
+
+                        }
+                        if(routeinfo == Route003_){
+
+                        }
+                        if(routeinfo == Route111_){
+
+                        }
+                        if(routeinfo == Route112_){
+
+                        }
+                        if(routeinfo == Route113_){
+
+                        }
+                        if(routeinfo == Route121_){
+
+                        }
+                        if(routeinfo == Route122_){
+
+                        }
+                        if(routeinfo == Route123_){
+
+                        }
+                        if(routeinfo == Route131_){
+
+                        }
+                        if(routeinfo == Route132_){
+
+                        }
+                        if(routeinfo == Route133_){
+
+                        }
+
+                    case FIELD_2_TOWER_0_CAMP_0:
+
+                    default:
+                        break;
+                }
+
+            case 1:
+                switch (STATE) {
+
+
+                    default:
+                        break;
+                }
+        }
+
+        return unit;
+    }
+
+    /**
+     * 初期化
+     */
+
+    //unit[0] = base_count; unit[1] = tower_count; unit[2] = field_count;
+    public void init() {
+        if (this.ternCount == FIRST_TURN) {
+            if (this.turnState == STATE_PLAY_TURN1) STATE = FIRST_MYTURN1;
+            if (this.turnState == STATE_PLAY_TURN2) STATE = FIRST_MYTURN1;
+            if (this.turnState == STATE_PLAY_TURN3) STATE = FIRST_MYTURN2;
+            if (this.turnState == STATE_PLAY_TURN4) STATE = FIRST_MYTURN2;
+        } else if (this.ternCount != FIRST_TURN) {
+            unit = search_pos_count();
+
+            if (unit[0] == 4){
+                STATE = FIELD_0_TOWER_0_CAMP_2;
+            }
+            if (unit[0] == 2 && unit[1] == 2){
+                STATE = FIELD_0_TOWER_1_CAMP_1;
+            }
+            if (unit[1] == 4 ){
+                STATE = FIELD_0_TOWER_2_CAMP_0;
+            }
+            if (unit[0]== 2 && unit[2] == 2 ){
+                STATE = FIELD_1_TOWER_0_CAMP_1;
+            }
+            if (unit[1]== 2 && unit[2] == 2 ){
+                STATE = FIELD_1_TOWER_1_CAMP_0;
+            }
+            if (unit[2] == 4 ){
+                STATE = FIELD_2_TOWER_0_CAMP_0;
+            }
+        }
+    }
+
+
+    //0:
+    public int[] setupUnit(int type) {
+        int pair[] = new int[2];
+
+        if (type == 0) {
+            pair[0] = 0;
+            pair[1] = 2;
+        } else if (type == 1) {
+            pair[0] = 1;
+            pair[1] = 3;
+        } else {
+            System.out.println("ERROR setUnit");
+            pair[0] = -1;
+            pair[1] = -1;
+        }
+        return pair;
+    }
+
+    public int[] search_pos_count() {
+
+        base_count = 0; field_count = 0; tower_count = 0;
+        int[] unit = new int[3];
+
+        if (this.MyTeamID == 0) {
+            for (int i = 0; i < 4; i++) {
+                if (this.unitLocation[this.MyTeamID][i] == Base0) base_count++;
+                if (this.unitLocation[this.MyTeamID][i] == Tower0) tower_count++;
+                if (this.unitLocation[this.MyTeamID][i] == Tower1) tower_count++;
+                if (this.unitLocation[this.MyTeamID][i] == Tower2) tower_count++;
+            }
+            field_count = 4 - base_count - tower_count;
+            unit[0] = base_count; unit[1] = tower_count; unit[2] = field_count;
+        } else if (this.MyTeamID == 1) {
+            for (int i = 0; i < 4; i++) {
+                if (this.unitLocation[this.MyTeamID][i] == Base0) base_count++;
+                if (this.unitLocation[this.MyTeamID][i] == Tower0) tower_count++;
+                if (this.unitLocation[this.MyTeamID][i] == Tower1) tower_count++;
+                if (this.unitLocation[this.MyTeamID][i] == Tower2) tower_count++;
+            }
+            field_count = 4 - base_count - tower_count;
+            unit[0] = base_count; unit[1] = tower_count; unit[2] = field_count;
+        }
+        return unit;
+    }
+
+    public void enableBaseUnit(){
+        if (this.MyTeamID == 0) {
+            for (int i = 0; i < 4; i++) {
+                if (this.unitLocation[this.MyTeamID][i] == Base0){
+                    if (i == 0||i == 2){
+                        base_unitpair = RED_GREEN;
+                    }
+                    if (i == 1 || i == 3){
+                        base_unitpair = BLACK_YELLOW;
+                    }
+                }
+            }
+        } else if (this.MyTeamID == 1) {
+            for (int i = 0; i < 4; i++) {
+                if (this.unitLocation[this.MyTeamID][i] == Base1){
+                    if (i == 0||i == 2){
+                        base_unitpair = RED_GREEN;
+                    }
+                    if (i == 1 || i == 3){
+                        base_unitpair = BLACK_YELLOW;
+                    }
+                }
+            }
+        }
+    }
+
+    public void sendtowerhold(){
+        int tower[] = new int[3];
+        if(this.towerHold[0] == this.MyTeamID){
+            tower[0] = 1;
+        }
+        if(this.towerHold[1] == this.MyTeamID){
+            tower[1] = 1;
+        }
+        if(this.towerHold[2] == this.MyTeamID){
+            tower[2] = 1;
+        }
+    }
+
+    public int Send_Routeinfo(){
+        return this.routeinfo;
+    }
+
+    public void search_field(){
+        if (this.MyTeamID == 0) {
+            for (int i = 0; i < 4; i++) {
+
+
+            }
+        } else if (this.MyTeamID == 1) {
+            for (int i = 0; i < 4; i++) {
+                if (this.unitLocation[this.MyTeamID][i] == Base0){
+
+
+
+
+                }
+            }
+        }
+
+
+    }
+
+
 
 }

@@ -34,21 +34,9 @@ public class Main {
                     GAME_STATUS = 2;
                 }
                 case 2: {
-                    if (ai1 == "1"){
-                        AI ai = new AI(addr,ai1,type1);
-                    }
-                    else if (ai1 == "2"){
+
                         AI1 ai = new AI1(addr,ai1,type1);
-                    }
-                    else if (ai1 == "3"){
-                        AI2 ai = new AI2(addr,ai1,type1);
-                    }
-                    else if (ai1 == "4"){
-                        AI3 ai = new AI3(addr,ai1,type1);
-                    }
-                    else {
-                        AI ai = new AI(addr, ai1,type1);
-                    }
+
                     break;
                 }
 
