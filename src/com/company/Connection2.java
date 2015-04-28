@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  */
 
 
-public class Connection implements Runnable{
+public class Connection2 implements Runnable{
 
     public final int STATE_NOCONECTION = 00;
     public final int STATE_INIT = 01;
@@ -30,13 +30,13 @@ public class Connection implements Runnable{
     public int state;
     private String myName;
     private String address;
-    private AI mainFiled;
+    private AI2 mainFiled;
 
 
 
     private int PlayerID;
 
-    public Connection(String name,AI main){
+    public Connection2(String name,AI2 main){
         this.mainFiled = main;
         this.myName = name;
         state = STATE_NOCONECTION;

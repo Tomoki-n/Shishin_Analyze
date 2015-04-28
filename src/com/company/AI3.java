@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 /**
  * Created by tomoki-n on 2015/04/10.
  */
-public class AI extends javax.swing.JFrame {
+public class AI3 extends javax.swing.JFrame {
 
     public static final int DEFALUTPORT = 13306;
     public static Color BGColor = new Color(236,233,216);
@@ -96,7 +96,7 @@ public class AI extends javax.swing.JFrame {
     /** サーバポート */
     private int serverPort;
     /** サーバ待ち受けスレッド*/
-    private Connection sthread;
+    private Connection3 sthread;
     /** セル用配列 */
     private Field[][] gameCell;
     /** ユニットの位置 */
@@ -156,7 +156,7 @@ public class AI extends javax.swing.JFrame {
     }
 
     /** Creates new form GameField */
-    public AI(String address,String type,String stype) {
+    public AI3(String address,String type,String stype) {
         this.serverIP = address;
         AI_type = Integer.parseInt(type);
         System.out.println("init");
@@ -179,7 +179,7 @@ public class AI extends javax.swing.JFrame {
         this.serverPort = DEFALUTPORT;
 
         //サーバに接続する
-        this.sthread = new Connection(this.myName,this);
+        this.sthread = new Connection3(this.myName,this);
         try {
             boolean connect = this.sthread.connectToServer(this.serverIP, this.serverPort);
             if(connect == false){
@@ -198,26 +198,6 @@ public class AI extends javax.swing.JFrame {
         this.firstTeamID = -1; info.firstTeamID = -1;
         this.ternCount = 0; info.turnCount = 0;
         this.boardType = BOARD_TYPE_UNDEFINED;
-        this.gameCell = new Field[11][11]; info.gamecell = new Field[11][11];
-        for(int i=0;i<11;i++){
-            for(int j=0;j<11;j++){
-                this.gameCell[j][i] = new Field(this);
-                if(i == 0 || i == 10){
-                    this.gameCell[j][i].setBorderCell(true);
-                }
-                if(j == 0 || j == 10){
-                    this.gameCell[j][i].setBorderCell(true);
-                }
-            }
-        }
-        //塔の設置
-        this.gameCell[PointValue2TrueValue(1)][PointValue2TrueValue(4)].setTowerCell(true);
-        this.gameCell[PointValue2TrueValue(4)][PointValue2TrueValue(4)].setTowerCell(true);
-        this.gameCell[PointValue2TrueValue(7)][PointValue2TrueValue(4)].setTowerCell(true);
-
-        //本陣の設置
-        this.gameCell[PointValue2TrueValue(4)][PointValue2TrueValue(7)].setHonjin(0);
-        this.gameCell[PointValue2TrueValue(4)][PointValue2TrueValue(1)].setHonjin(1);
 
         //ユニットの設置
         this.unitLocation = new Point[2][4];
