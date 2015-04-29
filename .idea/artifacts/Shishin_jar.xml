@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Shishin:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Shishin_jar</output-path>
+    <root id="archive" name="Shishin.jar">
+      <element id="module-output" name="Shishin" />
+    </root>
+  </artifact>
+</component>

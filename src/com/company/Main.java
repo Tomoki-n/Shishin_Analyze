@@ -1,3 +1,5 @@
+package com.company;
+
 import com.company.AI;
 import com.company.AI1;
 import com.company.AI2;
@@ -16,37 +18,11 @@ public class Main {
 
     private static int GAME_STATUS = 0;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         System.out.println("Starting Program");
 
-
-        for (int i=0; i<2; i++){
-            switch (GAME_STATUS) {
-                case 0: {
-                    addr = init();
-                    GAME_STATUS = 1;
-                    break;
-                }
-
-                case 1:{
-                    ai1 = AI_type();
-                    GAME_STATUS = 2;
-                }
-                case 2: {
-
-                        AI1 ai = new AI1(addr,ai1,type1);
-
-                    break;
-                }
-
-                default:
-                    break;
-
-            }
-
-
-        }
+        smain();
 
     }
     public static String init(){
@@ -110,6 +86,63 @@ public class Main {
         type = ai1;
         return type;
     }
+    public static void smain() throws InterruptedException {
+        if(GAME_STATUS ==4){
+            System.exit(0);
+        }
+
+        switch (GAME_STATUS) {
+            case 0: {
+                addr = init();
+                GAME_STATUS = 1;
+                smain();
+                break;
+            }
+
+            case 1:{
+                ai1 = AI_type();
+                GAME_STATUS = 2;
+                smain();
+
+                break;
+            }
+            case 2: {
+                type1 = Connect_type();
+                GAME_STATUS = 3;
+                smain();
+                break;
+            }
+            case 3:{
+                int ai2 = Integer.parseInt(ai1);
+                if (ai2 == 1) {
+                    AI ai = new AI(addr, ai1, type1);
+
+                }
+                else if (ai2 == 2) {
+                    AI1 ai = new AI1(addr, ai1, type1);
+
+
+                }
+                else if (ai2 == 3) {
+                    AI2 ai = new AI2(addr, ai1, type1);
+
+                }
+                else if (ai2 == 4) {
+                    AI3 ai = new AI3(addr, ai1, type1);
+
+                }
+
+                GAME_STATUS = 4;
+                break;
+            }
+            default:
+                break;
+
+        }
+
+
+    }
+
 
 
 }

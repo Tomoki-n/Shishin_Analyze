@@ -7,6 +7,7 @@ import java.io.*;
 import java.net.UnknownHostException;
 import java.lang.Object.*;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -249,6 +250,22 @@ public class AI1 extends javax.swing.JFrame {
     //下側：本陣位置
     //public static final Point Base1 = new Point(4, 7);
 
+    public static final Point Route101 = new Point(3, 2);
+    public static final Point Route102 = new Point(2, 3);
+    public static final Point Route103 = new Point(1, 4);
+
+    public static final Point Route111 = new Point(3, 2);
+    public static final Point Route112 = new Point(3, 3);
+    public static final Point Route113 = new Point(4, 4);
+
+    public static final Point Route121 = new Point(5, 2);
+    public static final Point Route122 = new Point(5, 3);
+    public static final Point Route123 = new Point(4, 4);
+
+    public static final Point Route131 = new Point(5, 2);
+    public static final Point Route132 = new Point(6, 3);
+    public static final Point Route133 = new Point(7, 4);
+
     public static final int Route101_ = 101;
     public static final int Route102_ = 102;
     public static final int Route103_ = 103;
@@ -266,17 +283,17 @@ public class AI1 extends javax.swing.JFrame {
     public static final int Route133_ = 134;
 
 
-    public int field_count = 0;
-    public int base_count = 0;
-    public int tower_count = 0;
 
-    public int[] unit;
+
+
     public int[] tower;
 
-    public static final int RED_GREEN = 100;
-    public static final int BLACK_YELLOW = 101;
+    public static final int RED_GREEN = 0;
+    public static final int BLACK_YELLOW = 1;
+    public int moveunit = -1;
 
     public int base_unitpair;
+    public int tower_unitpair;
     public int routeinfo = -1;
 
 
@@ -285,8 +302,8 @@ public class AI1 extends javax.swing.JFrame {
      */
     private int AI_type;
 
-    public final Point Base0 = new Point(4, 7);
-    public final Point Base1 = new Point(4, 1);
+    public static final Point Base0 = new Point(4, 7);
+    public static final Point Base1 = new Point(4, 1);
 
     /**
      * タワーの位置
@@ -309,7 +326,7 @@ public class AI1 extends javax.swing.JFrame {
     /**
      * Creates new form GameField
      */
-    public AI1(String address, String type, String stype) {
+    public AI1(String address, String type, String stype) throws InterruptedException {
         this.serverIP = address;
         AI_type = Integer.parseInt(type);
         System.out.println("init");
@@ -321,7 +338,7 @@ public class AI1 extends javax.swing.JFrame {
     /**
      * 状態をすべてリセット
      */
-    public void resetAll() {
+    public void resetAll() throws InterruptedException {
         this.state = STATE_WAITINGPLAYER;
         //名前の入力
         this.myName = null;
@@ -347,6 +364,8 @@ public class AI1 extends javax.swing.JFrame {
         } catch (IOException ex) {
             this.addMessage("サーバへの接続に失敗しました。IOException");
             System.exit(0);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         //正しく接続できたら処理開始
         this.playingTeamID = -1;
@@ -542,8 +561,8 @@ public class AI1 extends javax.swing.JFrame {
                 int ypos = Integer.parseInt(umc.group(4));
                 Point pos = new Point(xpos, ypos);
                 //this.prevUnitLocation[team][unitnum] = this.unitLocation[team][unitnum];
-
                 this.unitLocation[team][unitnum] = pos;
+
 
             } else if (omc.matches()) {
                 int ovstnum = Integer.parseInt(omc.group(1));//障害物ID
@@ -571,249 +590,46 @@ public class AI1 extends javax.swing.JFrame {
     /**
      * ユーザへのメッセージ表示
      */
-    public void addMessage(String msg) {
+    public void addMessage(String msg) throws InterruptedException {
 
-        if (this.sthread.state == STATE_PLAY) {
-
-            //int unit[][] = new int[2][3];
-
-            if (test == 1) {
-                init();
-                units = UnitOrder();
-                this.sthread.sendPlayMessage(units[0][0], units[0][1], units[0][2]);
-                test = 2;
-            }
-            if (test == 2) {
-                this.sthread.sendPlayMessage(units[1][0], units[1][1], units[1][2]);
-            }
-
-        }
-    System.out.println(msg);
-}
-
-    /** 1VS1の対戦
-     * 戻り値：1:勝ち 0:負け 2:引き分け -1:エラー
-     * 引数：  GREEN:0, BLACK:1, RED:2, YELLOW:3
-     * */
-
-    public int onevs(int A_char, int E_char){
-
-        if(A_char == BLACK){
-            if(E_char == BLACK){
-                return 2;
-            }
-            else if (E_char == RED){
-                return 1;
-            }
-            else if (E_char == GREEN){
-                return 0;
-            }
-            else if (E_char == YELLOW){
-                return 2;
-            }
+        if (msg == "Select Unit") {
+           if(MyTeamID == 0) { //int unit[][] = new int[2][3];
+               if (test == 1) {
+                   units = new int[2][3];
+                   init();
+                   synchronized (units) {
+                       units = UnitOrder0();
+                   }
+                   
+                   this.sthread.sendPlayMessage(units[0][0], units[0][1], units[0][2]);
+                   test = 2;
+               } else if (test == 2) {
+                   this.sthread.sendPlayMessage(units[1][0], units[1][1], units[1][2]);
+                   test = 1;
+               }
+           }else if(MyTeamID == 1){
+               if (test == 1) {
+                   units = new int[2][3];
+                   init();
+                   synchronized (units) {
+                       units = UnitOrder1();
+                   }
+                   this.sthread.sendPlayMessage(units[0][0], units[0][1], units[0][2]);
+                   test = 2;
+               } else if (test == 2) {
+                   this.sthread.sendPlayMessage(units[1][0], units[1][1], units[1][2]);
+                   test = 1;
+               }
+           }
         }
 
-        if(A_char == RED){
-            if(E_char == BLACK){
-                return 0;
-            }
-            else if (E_char == RED){
-                return 2;
-            }
-            else if (E_char == GREEN){
-                return 2;
-            }
-            else if (E_char == YELLOW){
-                return 1;
-            }
-        }
-        if(A_char == GREEN){
-            if(E_char == BLACK){
-                return 1;
-            }
-            else if (E_char == RED){
-                return 2;
-            }
-            else if (E_char == GREEN){
-                return 2;
-            }
-            else if (E_char == YELLOW){
-                return 0;
-            }
-        }
-        if(A_char == YELLOW){
-            if(E_char == BLACK){
-                return 2;
-            }
-            else if (E_char == RED){
-                return 0;
-            }
-            else if (E_char == GREEN){
-                return 1;
-            }
-            else if (E_char == YELLOW){
-                return 2;
-            }
-        }
-
-        return -1;
+        System.out.println(msg);
     }
 
-    /** 2VS2の対戦
-     * 戻り値：1:勝ち 0:負け 2:引き分け -1:エラー
-     * 引数：  GREEN:0, BLACK:1, RED:2, YELLOW:3
-     * */
-    public int twovs(int A_char1, int A_char2, int E_char1, int E_char2){
 
-        if((A_char1 == BLACK && A_char2 == GREEN)||(A_char1 == GREEN && A_char2 == BLACK)){
-            if((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
-                return 2;
-            }
-            else if ((E_char1 == RED && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == RED)){
-                return 2;
-            }
-            else if ((E_char1 == GREEN && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == GREEN)){
-                return 0;
-            }
-            else if ((E_char1 == BLACK && E_char2 == RED)||(E_char1 == RED && E_char2 == BLACK)){
-                return 1;
-            }
-            else if ((E_char1 == BLACK && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == BLACK)){
-                return 2;
-            }
-            else if ((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
-                return 2;
-            }
-        }
 
-        if((A_char1 == BLACK && A_char2 == RED)||(A_char1 == RED && A_char2 == BLACK)){
-            if((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
-                return 1;
-            }
-            else if ((E_char1 == RED && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == RED)){
-                return 2;
-            }
-            else if ((E_char1 == GREEN && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == GREEN)){
-                return 2;
-            }
-            else if ((E_char1 == BLACK && E_char2 == RED)||(E_char1 == RED && E_char2 == BLACK)){
-                return 2;
-            }
-            else if ((E_char1 == BLACK && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == BLACK)){
-                return 2;
-            }
-            else if ((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
-                return 1;
-            }
-        }
-        if((A_char1 == GREEN && A_char2 == RED)||(A_char1 == RED && A_char2 == GREEN)){
-            if((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
-                return 2;
-            }
-            else if ((E_char1 == RED && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == RED)){
-                return 2;
-            }
-            else if ((E_char1 == GREEN && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == GREEN)){
-                return 2;
-            }
-            else if ((E_char1 == BLACK && E_char2 == RED)||(E_char1 == RED && E_char2 == BLACK)){
-                return 2;
-            }
-            else if ((E_char1 == BLACK && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == BLACK)){
-                return 2;
-            }
-            else if ((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
-                return 2;
-            }
-        }
-        if((A_char1 == BLACK && A_char2 == YELLOW)||(A_char1 == YELLOW && A_char2 == BLACK)){
-            if((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
-                return 2;
-            }
-            else if ((E_char1 == RED && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == RED)){
-                return 2;
-            }
-            else if ((E_char1 == GREEN && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == GREEN)){
-                return 2;
-            }
-            else if ((E_char1 == BLACK && E_char2 == RED)||(E_char1 == RED && E_char2 == BLACK)){
-                return 2;
-            }
-            else if ((E_char1 == BLACK && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == BLACK)){
-                return 2;
-            }
-            else if ((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
-                return 2;
-            }
-        }
-        if((A_char1 == GREEN && A_char2 == YELLOW)||(A_char1 == YELLOW && A_char2 == GREEN)){
-            if((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
-                return 0;
-            }
-            else if ((E_char1 == RED && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == RED)){
-                return 2;
-            }
-            else if ((E_char1 == GREEN && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == GREEN)){
-                return 2;
-            }
-            else if ((E_char1 == BLACK && E_char2 == RED)||(E_char1 == RED && E_char2 == BLACK)){
-                return 2;
-            }
-            else if ((E_char1 == BLACK && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == BLACK)){
-                return 2;
-            }
-            else if ((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
-                return 0;
-            }
-        }
-        if((A_char1 == RED && A_char2 == YELLOW)||(A_char1 == YELLOW && A_char2 == RED)){
-            if((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
-                return 2;
-            }
-            else if ((E_char1 == RED && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == RED)){
-                return 2;
-            }
-            else if ((E_char1 == GREEN && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == GREEN)){
-                return 0;
-            }
-            else if ((E_char1 == BLACK && E_char2 == RED)||(E_char1 == RED && E_char2 == BLACK)){
-                return 1;
-            }
-            else if ((E_char1 == BLACK && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == BLACK)){
-                return 2;
-            }
-            else if ((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
-                return 2;
-            }
-        }
 
-        return -1;
-    }
-
-    /** 得点差 */
-    public int getPoint(){
-        int i,j;
-        i=teamPoint[0]-teamPoint[1];
-        if(i>0)  victoryTeamID=0;
-        else if(i<0)  victoryTeamID=1;
-
-        return Math.abs(i);
-    }
-
-    /** 最も近いタワー */
-    public Point getNearestTower(Point pos) {
-        int i, j, k;
-        i = distance(pos, tower_left);
-        j = distance(pos, tower_center);
-        k = distance(pos, tower_right);
-
-        if (i < j && i < k) return (tower_left);
-        else if (j < i && j < k) return (tower_center);
-        else if (k < i && k < j) return (tower_right);
-        else return (tower_center);
-    }
-
-    public int[][] UnitOrder() {
+    public synchronized int[][]  UnitOrder0() {
 
         /** 0:コマの種類　1:X座標　2:Y座標 3:ルート**/
         int unit[][] = new int[2][4];
@@ -821,169 +637,344 @@ public class AI1 extends javax.swing.JFrame {
         switch (this.MyTeamID) {
             case 0:
                 switch (STATE) {
+                    case FIELD_0_TOWER_0_CAMP_2:
                     case FIRST_MYTURN1:{
-                        unit[0][0] = setupUnit(0)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
-                        unit[1][0] = setupUnit(0)[1]; unit[1][1] = Route001.x; unit[1][2] = Route001.y;
-                        routeinfo = Route001_;
-                        break;
-                    }
-                    case FIRST_MYTURN2:{
-                        unit[0][0] = setupUnit(0)[0]; unit[0][1] = Route002.x; unit[0][2] = Route002.y;
-                        unit[1][0] = setupUnit(0)[1]; unit[1][1] = Route002.x; unit[1][2] = Route002.y;
-                        routeinfo = Route001_;
-                        break;
+                        Random rnd = new Random();
+                        int rot = rnd.nextInt(4);
+                        int uni = rnd.nextInt(2);
+                        int[] y = new int [2];
+                        y[0] = rot; y[1] = uni;
+                        if(y[0] == 0) {
+                            unit[0][0] = setupUnit(y[1])[0];
+                            unit[0][1] = Route001.x;
+                            unit[0][2] = Route001.y;
+                            unit[1][0] = setupUnit(y[1])[1];
+                            unit[1][1] = Route001.x;
+                            unit[1][2] = Route001.y;
+                            routeinfo = Route001_;
+                            moveunit = y[1];
+                            return unit;
+                        }
+                        else if(y[0] == 1) {
+                            unit[0][0] = setupUnit(y[1])[0];
+                            unit[0][1] = Route011.x;
+                            unit[0][2] = Route011.y;
+                            unit[1][0] = setupUnit(y[1])[1];
+                            unit[1][1] = Route011.x;
+                            unit[1][2] = Route011.y;
+                            routeinfo = Route011_;
+                            moveunit = y[1];
+                            return unit;
+                        }
+                        else if(y[0] == 2) {
+                            unit[0][0] = setupUnit(y[1])[0];
+                            unit[0][1] = Route021.x;
+                            unit[0][2] = Route021.y;
+                            unit[1][0] = setupUnit(y[1])[1];
+                            unit[1][1] = Route021.x;
+                            unit[1][2] = Route021.y;
+                            routeinfo = Route021_;
+                            moveunit = y[1];
+                            return unit;
+                        }
+                        else if(y[0] == 3) {
+                            unit[0][0] = setupUnit(y[1])[0];
+                            unit[0][1] = Route031.x;
+                            unit[0][2] = Route031.y;
+                            unit[1][0] = setupUnit(y[1])[1];
+                            unit[1][1] = Route031.x;
+                            unit[1][2] = Route031.y;
+                            routeinfo = Route031_;
+                            moveunit = y[1];
+                            return unit;
+                        }
+
                     }
 
-                    case FIELD_0_TOWER_0_CAMP_2:{
-                        unit[0][0] = setupUnit(0)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
-                        unit[1][0] = setupUnit(0)[1]; unit[1][1] = Route001.x; unit[1][2] = Route001.y;
-                        routeinfo = Route001_;
-                        break;
-                    }
+                    break;
                     case FIELD_0_TOWER_1_CAMP_1: {
                         sendtowerhold();
                         enableBaseUnit();
-                        if(tower[0] == 1){
+
+                        if(tower[1] != 1) {
                             if (base_unitpair == BLACK_YELLOW) {
-                                unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route011.x; unit[0][2] = Route011.y;
-                                unit[1][0] = setupUnit(1)[1]; unit[1][1] = Route011.x; unit[1][2] = Route011.y;
-                                break;
+                                Random rnd = new Random();
+                                int uni = rnd.nextInt(2);
+                                if(uni == 0) {
+                                    unit[0][0] = setupUnit(base_unitpair)[0];
+                                    unit[0][1] = Route011.x;
+                                    unit[0][2] = Route011.y;
+                                    unit[1][0] = setupUnit(base_unitpair)[1];
+                                    unit[1][1] = Route011.x;
+                                    unit[1][2] = Route011.y;
+                                    routeinfo = Route011_;
+                                    moveunit = base_unitpair;
+                                    return unit;
+                                }
+                                else if(uni == 1) {
+                                    unit[0][0] = setupUnit(base_unitpair)[0];
+                                    unit[0][1] = Route021.x;
+                                    unit[0][2] = Route021.y;
+                                    unit[1][0] = setupUnit(base_unitpair)[1];
+                                    unit[1][1] = Route021.x;
+                                    unit[1][2] = Route021.y;
+                                    routeinfo = Route021_;
+                                    moveunit = base_unitpair;
+                                    return unit;
+                                }
                             }
                             if (base_unitpair == RED_GREEN) {
-                                unit[0][0] = setupUnit(0)[0]; unit[0][1] = Route011.x; unit[0][2] = Route011.y;
-                                unit[1][0] = setupUnit(1)[1]; unit[0][1] = Route011.x; unit[0][2] = Route011.y;
-                                break;
+                                Random rnd = new Random();
+                                int uni = rnd.nextInt(2);
+                                if(uni == 0) {
+                                    unit[0][0] = setupUnit(base_unitpair)[0];
+                                    unit[0][1] = Route011.x;
+                                    unit[0][2] = Route011.y;
+                                    unit[1][0] = setupUnit(base_unitpair)[1];
+                                    unit[1][1] = Route011.x;
+                                    unit[1][2] = Route011.y;
+                                    routeinfo = Route011_;
+                                    moveunit = base_unitpair;
+                                    return unit;
+                                }
+                                else if(uni == 1) {
+                                    unit[0][0] = setupUnit(base_unitpair)[0];
+                                    unit[0][1] = Route021.x;
+                                    unit[0][2] = Route021.y;
+                                    unit[1][0] = setupUnit(base_unitpair)[1];
+                                    unit[1][1] = Route021.x;
+                                    unit[1][2] = Route021.y;
+                                    routeinfo = Route021_;
+                                    moveunit = base_unitpair;
+                                    return unit;
+                                }
+
                             }
                         }
-                        if(tower[1] == 1){
+                        if(tower[0] != 1){
                             if (base_unitpair == BLACK_YELLOW) {
-                                unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
-                                unit[1][0] = setupUnit(1)[1]; unit[1][1] = Route001.x; unit[1][2] = Route001.y;
-                                break;
+                                unit[0][0] = setupUnit(base_unitpair)[0];
+                                unit[0][1] = Route001.x;
+                                unit[0][2] = Route001.y;
+                                unit[1][0] = setupUnit(base_unitpair)[1];
+                                unit[1][1] = Route001.x;
+                                unit[1][2] = Route001.y;
+                                routeinfo = Route001_;
+                                moveunit = base_unitpair;
+                                return unit;
                             }
                             if (base_unitpair == RED_GREEN) {
-                                unit[0][0] = setupUnit(0)[0]; unit[0][1] = Route021.x; unit[0][2] = Route021.y;
-                                unit[1][0] = setupUnit(0)[1]; unit[1][1] = Route021.x; unit[1][2] = Route021.y;
-                                break;
+                                unit[0][0] = setupUnit(base_unitpair)[0];
+                                unit[0][1] = Route001.x;
+                                unit[0][2] = Route001.y;
+                                unit[1][0] = setupUnit(base_unitpair)[1];
+                                unit[1][1] = Route001.x;
+                                unit[1][2] = Route001.y;
+                                routeinfo = Route001_;
+                                moveunit = base_unitpair;
+                                return unit;
                             }
                         }
-                        if(tower[2] == 1){
+
+                        if(tower[2] != 1){
                             if (base_unitpair == BLACK_YELLOW) {
-                                unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
-                                unit[1][0] = setupUnit(1)[1]; unit[1][1] = Route001.x; unit[1][2] = Route001.y;
-                                break;
+                                unit[0][0] = setupUnit(base_unitpair)[0];
+                                unit[0][1] = Route031.x;
+                                unit[0][2] = Route031.y;
+                                unit[1][0] = setupUnit(base_unitpair)[1];
+                                unit[1][1] = Route031.x;
+                                unit[1][2] = Route031.y;
+                                routeinfo = Route031_;
+                                moveunit = base_unitpair;
+                                return unit;
                             }
                             if (base_unitpair == RED_GREEN) {
-                                unit[0][0] = setupUnit(0)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
-                                unit[1][0] = setupUnit(0)[1]; unit[1][1] = Route001.x; unit[1][2] = Route001.y;
-                                break;
+                                unit[0][0] = setupUnit(base_unitpair)[0];
+                                unit[0][1] = Route031.x;
+                                unit[0][2] = Route031.y;
+                                unit[1][0] = setupUnit(base_unitpair)[1];
+                                unit[1][1] = Route031.x;
+                                unit[1][2] = Route031.y;
+                                routeinfo = Route031_;
+                                moveunit = base_unitpair;
+                                return unit;
                             }
                         }
-                        break;
+
                     }
+                    break;
                     case FIELD_0_TOWER_2_CAMP_0: {
-                        if(tower[0] == 1){
-                            if (base_unitpair == BLACK_YELLOW) {
-                                unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
-                                unit[0][0] = setupUnit(1)[1]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
-                                break;
-                            }
-                            if (base_unitpair == RED_GREEN) {
-                                unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
-                                unit[0][0] = setupUnit(1)[1]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
-                                break;
-                            }
+                        sendtowerhold();
+                        enableTowerUnit();
+                        if (tower[1] == 1) {
+                            unit[0][0] = setupUnit(tower_unitpair)[0];
+                            unit[0][1] = Route012.x;
+                            unit[0][2] = Route012.y;
+                            unit[0][0] = setupUnit(tower_unitpair)[0];
+                            unit[0][1] = Route013.x;
+                            unit[0][2] = Route013.y;
+                            return unit;
                         }
-                        if(tower[1] == 1){
-                            if (base_unitpair == BLACK_YELLOW) {
-                                unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
-                                unit[0][0] = setupUnit(1)[1]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
-                                break;
-                            }
-                            if (base_unitpair == RED_GREEN) {
-                                unit[0][0] = setupUnit(1)[0]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
-                                unit[0][0] = setupUnit(1)[1]; unit[0][1] = Route001.x; unit[0][2] = Route001.y;
-                                break;
-                            }
+                        if (tower[0] == 1) {
+                            unit[0][0] = setupUnit(1)[0];
+                            unit[0][1] = Route002.x;
+                            unit[0][2] = Route002.y;
+                            unit[0][0] = setupUnit(1)[1];
+                            unit[0][1] = Route003.x;
+                            unit[0][2] = Route003.y;
+                            return unit;
                         }
-                        break;
+
                     }
-                    case FIELD_1_TOWER_0_CAMP_1:
-                        if(routeinfo == Route001_){
+                        break;
+                    case FIELD_1_TOWER_0_CAMP_1: {
+                        if (routeinfo == Route001_) {
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route002.x;
+                            unit[0][2] = Route002.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route002.x;
+                            unit[1][2] = Route002.y;
+                            routeinfo = Route002_;
+                            return unit;
+                        } else if (routeinfo == Route002_) {
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route003.x;
+                            unit[0][2] = Route003.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route003.x;
+                            unit[1][2] = Route003.y;
+                            routeinfo = Route003_;
+                        } else if (routeinfo == Route011_) {
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route012.x;
+                            unit[0][2] = Route012.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route012.x;
+                            unit[1][2] = Route012.y;
+                            routeinfo = Route012_;
+                        } else if (routeinfo == Route012_) {
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route013.x;
+                            unit[0][2] = Route013.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route013.x;
+                            unit[1][2] = Route013.y;
+                            routeinfo = Route013_;
+                        } else if (routeinfo == Route021_) {
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route022.x;
+                            unit[0][2] = Route022.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route022.x;
+                            unit[1][2] = Route022.y;
+                            routeinfo = Route022_;
 
+                        } else if (routeinfo == Route022_) {
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route023.x;
+                            unit[0][2] = Route023.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route023.x;
+                            unit[1][2] = Route023.y;
+                            routeinfo = Route023_;
+                        } else if (routeinfo == Route031_) {
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route032.x;
+                            unit[0][2] = Route032.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route032.x;
+                            unit[1][2] = Route032.y;
+                            routeinfo = Route032_;
+                        } else if (routeinfo == Route032_) {
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route033.x;
+                            unit[0][2] = Route033.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route033.x;
+                            unit[1][2] = Route033.y;
+                            routeinfo = Route033_;
                         }
-                        if(routeinfo == Route002_){
-
-                        }
-                        if(routeinfo == Route003_){
-
-                        }
-                        if(routeinfo == Route111_){
-
-                        }
-                        if(routeinfo == Route112_){
-
-                        }
-                        if(routeinfo == Route113_){
-
-                        }
-                        if(routeinfo == Route121_){
-
-                        }
-                        if(routeinfo == Route122_){
-
-                        }
-                        if(routeinfo == Route123_){
-
-                        }
-                        if(routeinfo == Route131_){
-
-                        }
-                        if(routeinfo == Route132_){
-
-                        }
-                        if(routeinfo == Route133_){
-
-                        }
+                    }
+                        break;
                     case FIELD_1_TOWER_1_CAMP_0:
                         if(routeinfo == Route001_){
-
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route002.x;
+                            unit[0][2] = Route002.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route002.x;
+                            unit[1][2] = Route002.y;
+                            routeinfo = Route002_;
                         }
-                        if(routeinfo == Route002_){
-
-                        }
-                        if(routeinfo == Route003_){
-
-                        }
-                        if(routeinfo == Route111_){
-
-                        }
-                        if(routeinfo == Route112_){
-
-                        }
-                        if(routeinfo == Route113_){
-
-                        }
-                        if(routeinfo == Route121_){
-
-                        }
-                        if(routeinfo == Route122_){
-
-                        }
-                        if(routeinfo == Route123_){
-
-                        }
-                        if(routeinfo == Route131_){
-
-                        }
-                        if(routeinfo == Route132_){
-
-                        }
-                        if(routeinfo == Route133_){
-
+                        else if(routeinfo == Route002_){
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route003.x;
+                            unit[0][2] = Route003.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route003.x;
+                            unit[1][2] = Route003.y;
+                            routeinfo = Route003_;
                         }
 
-                    case FIELD_2_TOWER_0_CAMP_0:
+                        else if(routeinfo == Route011_){
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route012.x;
+                            unit[0][2] = Route012.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route012.x;
+                            unit[1][2] = Route012.y;
+                            routeinfo = Route012_;
+                        }
+                        else if(routeinfo == Route012_){
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route013.x;
+                            unit[0][2] = Route013.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route013.x;
+                            unit[1][2] = Route013.y;
+                            routeinfo = Route013_;
+                        }
+
+                        else if(routeinfo == Route021_){
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route022.x;
+                            unit[0][2] = Route022.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route022.x;
+                            unit[1][2] = Route022.y;
+                            routeinfo = Route022_;
+
+                        }
+                        else if(routeinfo == Route022_){
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route023.x;
+                            unit[0][2] = Route023.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route023.x;
+                            unit[1][2] = Route023.y;
+                            routeinfo = Route023_;
+                        }
+
+                        else if(routeinfo == Route031_){
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route032.x;
+                            unit[0][2] = Route032.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route032.x;
+                            unit[1][2] = Route032.y;
+                            routeinfo = Route032_;
+                        }
+                        else if(routeinfo == Route032_){
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route033.x;
+                            unit[0][2] = Route033.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route033.x;
+                            unit[1][2] = Route033.y;
+                            routeinfo = Route033_;
+                        }
+                        break;
 
                     default:
                         break;
@@ -1000,45 +991,413 @@ public class AI1 extends javax.swing.JFrame {
 
         return unit;
     }
+    public synchronized int[][]  UnitOrder1() {
 
+        /** 0:コマの種類　1:X座標　2:Y座標 3:ルート**/
+        int unit[][] = new int[2][4];
+
+        switch (this.MyTeamID) {
+            case 1:
+                switch (STATE) {
+                    case FIELD_0_TOWER_0_CAMP_2:
+                    case FIRST_MYTURN1:{
+                        Random rnd = new Random();
+                        int rot = rnd.nextInt(4);
+                        int uni = rnd.nextInt(2);
+                        int[] y = new int [2];
+                        y[0] = rot; y[1] = uni;
+                        if(y[0] == 0) {
+                            unit[0][0] = setupUnit(y[1])[0];
+                            unit[0][1] = Route101.x;
+                            unit[0][2] = Route101.y;
+                            unit[1][0] = setupUnit(y[1])[1];
+                            unit[1][1] = Route101.x;
+                            unit[1][2] = Route101.y;
+                            routeinfo = Route101_;
+                            moveunit = y[1];
+                            return unit;
+                        }
+                        else if(y[0] == 1) {
+                            unit[0][0] = setupUnit(y[1])[0];
+                            unit[0][1] = Route111.x;
+                            unit[0][2] = Route111.y;
+                            unit[1][0] = setupUnit(y[1])[1];
+                            unit[1][1] = Route111.x;
+                            unit[1][2] = Route111.y;
+                            routeinfo = Route111_;
+                            moveunit = y[1];
+                            return unit;
+                        }
+                        else if(y[0] == 2) {
+                            unit[0][0] = setupUnit(y[1])[0];
+                            unit[0][1] = Route121.x;
+                            unit[0][2] = Route121.y;
+                            unit[1][0] = setupUnit(y[1])[1];
+                            unit[1][1] = Route121.x;
+                            unit[1][2] = Route121.y;
+                            routeinfo = Route121_;
+                            moveunit = y[1];
+                            return unit;
+                        }
+                        else if(y[0] == 3) {
+                            unit[0][0] = setupUnit(y[1])[0];
+                            unit[0][1] = Route131.x;
+                            unit[0][2] = Route131.y;
+                            unit[1][0] = setupUnit(y[1])[1];
+                            unit[1][1] = Route131.x;
+                            unit[1][2] = Route131.y;
+                            routeinfo = Route131_;
+                            moveunit = y[1];
+                            return unit;
+                        }
+
+                    }
+
+                    break;
+                    case FIELD_0_TOWER_1_CAMP_1: {
+                        sendtowerhold();
+                        enableBaseUnit();
+
+                        if(tower[1] != 1) {
+                            if (base_unitpair == BLACK_YELLOW) {
+                                Random rnd = new Random();
+                                int uni = rnd.nextInt(2);
+                                if(uni == 0) {
+                                    unit[0][0] = setupUnit(base_unitpair)[0];
+                                    unit[0][1] = Route111.x;
+                                    unit[0][2] = Route111.y;
+                                    unit[1][0] = setupUnit(base_unitpair)[1];
+                                    unit[1][1] = Route111.x;
+                                    unit[1][2] = Route111.y;
+                                    routeinfo = Route111_;
+                                    moveunit = base_unitpair;
+                                    return unit;
+                                }
+                                if(uni == 1) {
+                                    unit[0][0] = setupUnit(base_unitpair)[0];
+                                    unit[0][1] = Route121.x;
+                                    unit[0][2] = Route121.y;
+                                    unit[1][0] = setupUnit(base_unitpair)[1];
+                                    unit[1][1] = Route121.x;
+                                    unit[1][2] = Route121.y;
+                                    routeinfo = Route121_;
+                                    moveunit = base_unitpair;
+                                    return unit;
+                                }
+                            }
+                            if (base_unitpair == RED_GREEN) {
+                                Random rnd = new Random();
+                                int uni = rnd.nextInt(2);
+                                if(uni == 0) {
+                                    unit[0][0] = setupUnit(base_unitpair)[0];
+                                    unit[0][1] = Route111.x;
+                                    unit[0][2] = Route111.y;
+                                    unit[1][0] = setupUnit(base_unitpair)[1];
+                                    unit[1][1] = Route111.x;
+                                    unit[1][2] = Route111.y;
+                                    routeinfo = Route111_;
+                                    moveunit = base_unitpair;
+                                    return unit;
+                                }
+                                if(uni == 1) {
+                                    unit[0][0] = setupUnit(base_unitpair)[0];
+                                    unit[0][1] = Route121.x;
+                                    unit[0][2] = Route121.y;
+                                    unit[1][0] = setupUnit(base_unitpair)[1];
+                                    unit[1][1] = Route121.x;
+                                    unit[1][2] = Route121.y;
+                                    routeinfo = Route121_;
+                                    moveunit = base_unitpair;
+                                    return unit;
+                                }
+
+                            }
+                        }
+                        if(tower[0] != 1){
+                            if (base_unitpair == BLACK_YELLOW) {
+                                unit[0][0] = setupUnit(base_unitpair)[0];
+                                unit[0][1] = Route101.x;
+                                unit[0][2] = Route101.y;
+                                unit[1][0] = setupUnit(base_unitpair)[1];
+                                unit[1][1] = Route101.x;
+                                unit[1][2] = Route101.y;
+                                routeinfo = Route101_;
+                                moveunit = base_unitpair;
+                                return unit;
+                            }
+                            if (base_unitpair == RED_GREEN) {
+                                unit[0][0] = setupUnit(base_unitpair)[0];
+                                unit[0][1] = Route101.x;
+                                unit[0][2] = Route101.y;
+                                unit[1][0] = setupUnit(base_unitpair)[1];
+                                unit[1][1] = Route101.x;
+                                unit[1][2] = Route101.y;
+                                routeinfo = Route101_;
+                                moveunit = base_unitpair;
+                                return unit;
+                            }
+                        }
+
+                        if(tower[2] != 1){
+                            if (base_unitpair == BLACK_YELLOW) {
+                                unit[0][0] = setupUnit(base_unitpair)[0];
+                                unit[0][1] = Route131.x;
+                                unit[0][2] = Route131.y;
+                                unit[1][0] = setupUnit(base_unitpair)[1];
+                                unit[1][1] = Route131.x;
+                                unit[1][2] = Route131.y;
+                                routeinfo = Route131_;
+                                moveunit = base_unitpair;
+                                return unit;
+                            }
+                            if (base_unitpair == RED_GREEN) {
+                                unit[0][0] = setupUnit(base_unitpair)[0];
+                                unit[0][1] = Route131.x;
+                                unit[0][2] = Route131.y;
+                                unit[1][0] = setupUnit(base_unitpair)[1];
+                                unit[1][1] = Route131.x;
+                                unit[1][2] = Route131.y;
+                                routeinfo = Route131_;
+                                moveunit = base_unitpair;
+                                return unit;
+                            }
+                        }
+
+                    }
+                    break;
+                    case FIELD_0_TOWER_2_CAMP_0: {
+                        sendtowerhold();
+                        enableTowerUnit();
+                        if (tower[1] == 1) {
+                            unit[0][0] = setupUnit(tower_unitpair)[0];
+                            unit[0][1] = Route112.x;
+                            unit[0][2] = Route112.y;
+                            unit[0][0] = setupUnit(tower_unitpair)[0];
+                            unit[0][1] = Route113.x;
+                            unit[0][2] = Route113.y;
+                            return unit;
+                        }
+                        if (tower[0] == 1) {
+                            unit[0][0] = setupUnit(1)[0];
+                            unit[0][1] = Route102.x;
+                            unit[0][2] = Route102.y;
+                            unit[0][0] = setupUnit(1)[1];
+                            unit[0][1] = Route103.x;
+                            unit[0][2] = Route103.y;
+                            return unit;
+                        }
+
+                    }
+                    break;
+                    case FIELD_1_TOWER_0_CAMP_1: {
+                        if (routeinfo == Route101_) {
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route102.x;
+                            unit[0][2] = Route102.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route102.x;
+                            unit[1][2] = Route102.y;
+                            routeinfo = Route102_;
+                            return unit;
+                        } else if (routeinfo == Route102_) {
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route103.x;
+                            unit[0][2] = Route103.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route103.x;
+                            unit[1][2] = Route103.y;
+                            routeinfo = Route103_;
+                        } else if (routeinfo == Route111_) {
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route112.x;
+                            unit[0][2] = Route112.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route112.x;
+                            unit[1][2] = Route112.y;
+                            routeinfo = Route112_;
+                        } else if (routeinfo == Route112_) {
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route113.x;
+                            unit[0][2] = Route113.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route113.x;
+                            unit[1][2] = Route113.y;
+                            routeinfo = Route113_;
+                        } else if (routeinfo == Route121_) {
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route122.x;
+                            unit[0][2] = Route122.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route122.x;
+                            unit[1][2] = Route122.y;
+                            routeinfo = Route122_;
+
+                        } else if (routeinfo == Route122_) {
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route123.x;
+                            unit[0][2] = Route123.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route123.x;
+                            unit[1][2] = Route123.y;
+                            routeinfo = Route123_;
+                        } else if (routeinfo == Route131_) {
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route132.x;
+                            unit[0][2] = Route132.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route132.x;
+                            unit[1][2] = Route132.y;
+                            routeinfo = Route132_;
+                        } else if (routeinfo == Route132_) {
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route133.x;
+                            unit[0][2] = Route133.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route133.x;
+                            unit[1][2] = Route133.y;
+                            routeinfo = Route133_;
+                        }
+                    }
+                    break;
+                    case FIELD_1_TOWER_1_CAMP_0:
+                        if(routeinfo == Route101_){
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route102.x;
+                            unit[0][2] = Route102.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route102.x;
+                            unit[1][2] = Route102.y;
+                            routeinfo = Route102_;
+                        }
+                        else if(routeinfo == Route102_){
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route103.x;
+                            unit[0][2] = Route103.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route103.x;
+                            unit[1][2] = Route103.y;
+                            routeinfo = Route103_;
+                        }
+
+                        else if(routeinfo == Route111_){
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route112.x;
+                            unit[0][2] = Route112.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route112.x;
+                            unit[1][2] = Route112.y;
+                            routeinfo = Route112_;
+                        }
+                        else if(routeinfo == Route112_){
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route113.x;
+                            unit[0][2] = Route113.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route113.x;
+                            unit[1][2] = Route113.y;
+                            routeinfo = Route113_;
+                        }
+
+                        else if(routeinfo == Route121_){
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route122.x;
+                            unit[0][2] = Route122.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route122.x;
+                            unit[1][2] = Route122.y;
+                            routeinfo = Route122_;
+
+                        }
+                        else if(routeinfo == Route122_){
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route123.x;
+                            unit[0][2] = Route123.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route123.x;
+                            unit[1][2] = Route123.y;
+                            routeinfo = Route123_;
+                        }
+
+                        else if(routeinfo == Route131_){
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route132.x;
+                            unit[0][2] = Route132.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route132.x;
+                            unit[1][2] = Route132.y;
+                            routeinfo = Route132_;
+                        }
+                        else if(routeinfo == Route132_){
+                            unit[0][0] = setupUnit(moveunit)[0];
+                            unit[0][1] = Route133.x;
+                            unit[0][2] = Route133.y;
+                            unit[1][0] = setupUnit(moveunit)[1];
+                            unit[1][1] = Route133.x;
+                            unit[1][2] = Route133.y;
+                            routeinfo = Route133_;
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+
+            case 0:
+                switch (STATE) {
+
+
+                    default:
+                        break;
+                }
+        }
+
+        return unit;
+    }
     /**
      * 初期化
      */
 
     //unit[0] = base_count; unit[1] = tower_count; unit[2] = field_count;
-    public void init() {
+    public synchronized int[] init() {
+        int[] x = new int[2];
         if (this.ternCount == FIRST_TURN) {
-            if (this.turnState == STATE_PLAY_TURN1) STATE = FIRST_MYTURN1;
-            if (this.turnState == STATE_PLAY_TURN2) STATE = FIRST_MYTURN1;
-            if (this.turnState == STATE_PLAY_TURN3) STATE = FIRST_MYTURN2;
-            if (this.turnState == STATE_PLAY_TURN4) STATE = FIRST_MYTURN2;
-        } else if (this.ternCount != FIRST_TURN) {
+            STATE = FIRST_MYTURN1;
+
+        }
+        else {
+            int[] unit = new int[3];
             unit = search_pos_count();
 
+            System.out.println(unit[0]+" "+unit[1]+" "+unit[2]);
+            System.out.println("Set STATE");
             if (unit[0] == 4){
                 STATE = FIELD_0_TOWER_0_CAMP_2;
-            }
-            if (unit[0] == 2 && unit[1] == 2){
+                System.out.println("FIELD_0_TOWER_0_CAMP_2");
+           }
+            else if (unit[0] == 2 && unit[1] == 2){
                 STATE = FIELD_0_TOWER_1_CAMP_1;
+                System.out.println("FIELD_0_TOWER_1_CAMP_1");
             }
-            if (unit[1] == 4 ){
+            else if (unit[1] == 4 ){
                 STATE = FIELD_0_TOWER_2_CAMP_0;
+                System.out.println("FIELD_0_TOWER_2_CAMP_0");
             }
-            if (unit[0]== 2 && unit[2] == 2 ){
+            else if (unit[0]== 2 && unit[2] == 2 ){
                 STATE = FIELD_1_TOWER_0_CAMP_1;
+                System.out.println("FIELD_1_TOWER_0_CAMP_1");
             }
-            if (unit[1]== 2 && unit[2] == 2 ){
+            else if (unit[1]== 2 && unit[2] == 2 ){
                 STATE = FIELD_1_TOWER_1_CAMP_0;
+                System.out.println("FIELD_1_TOWER_1_CAMP_0");
             }
-            if (unit[2] == 4 ){
-                STATE = FIELD_2_TOWER_0_CAMP_0;
-            }
+
         }
+        return x;
     }
 
 
     //0:
-    public int[] setupUnit(int type) {
+    public synchronized int[] setupUnit(int type) {
         int pair[] = new int[2];
 
         if (type == 0) {
@@ -1055,37 +1414,60 @@ public class AI1 extends javax.swing.JFrame {
         return pair;
     }
 
-    public int[] search_pos_count() {
-
-        base_count = 0; field_count = 0; tower_count = 0;
-        int[] unit = new int[3];
-
+    public  int[] search_pos_count() {
+        System.out.println("search_pos_count");
+        int field_count = 4;
+        int base_count = 0;
+        int tower_count = 0;
+        int[] unit1 = new int[3];
         if (this.MyTeamID == 0) {
             for (int i = 0; i < 4; i++) {
-                if (this.unitLocation[this.MyTeamID][i] == Base0) base_count++;
-                if (this.unitLocation[this.MyTeamID][i] == Tower0) tower_count++;
-                if (this.unitLocation[this.MyTeamID][i] == Tower1) tower_count++;
-                if (this.unitLocation[this.MyTeamID][i] == Tower2) tower_count++;
+                if (this.unitLocation[this.MyTeamID][i].equals(Base0)) {
+                    base_count++;
+                }
+                if (this.unitLocation[this.MyTeamID][i].equals(tower_left)) {
+                    tower_count++;
+                }
+                if (this.unitLocation[this.MyTeamID][i].equals(tower_right)) {
+                    tower_count++;
+                }
+                if (this.unitLocation[this.MyTeamID][i].equals(tower_center)) {
+                    tower_count++;
+                }
             }
-            field_count = 4 - base_count - tower_count;
-            unit[0] = base_count; unit[1] = tower_count; unit[2] = field_count;
-        } else if (this.MyTeamID == 1) {
-            for (int i = 0; i < 4; i++) {
-                if (this.unitLocation[this.MyTeamID][i] == Base0) base_count++;
-                if (this.unitLocation[this.MyTeamID][i] == Tower0) tower_count++;
-                if (this.unitLocation[this.MyTeamID][i] == Tower1) tower_count++;
-                if (this.unitLocation[this.MyTeamID][i] == Tower2) tower_count++;
-            }
-            field_count = 4 - base_count - tower_count;
-            unit[0] = base_count; unit[1] = tower_count; unit[2] = field_count;
+
+            unit1[0] = base_count;
+            unit1[1] = tower_count;
+            unit1[2] = field_count - base_count - tower_count;
+            return unit1;
         }
-        return unit;
-    }
+        if (this.MyTeamID == 1) {
+            for (int i = 0; i < 4; i++) {
+                if (this.unitLocation[this.MyTeamID][i].equals(Base1)) {
+                    base_count++;
+                }
+                if (this.unitLocation[this.MyTeamID][i].equals(tower_left)) {
+                    tower_count++;
+                }
+                if (this.unitLocation[this.MyTeamID][i].equals(tower_right)) {
+                    tower_count++;
+                }
+                if (this.unitLocation[this.MyTeamID][i].equals(tower_center)) {
+                    tower_count++;
+                }
+            }
 
-    public void enableBaseUnit(){
+            unit1[0] = base_count;
+            unit1[1] = tower_count;
+            unit1[2] = field_count - base_count - tower_count;
+            return unit1;
+        }
+        return unit1;
+    }
+    public synchronized  void enableBaseUnit(){
         if (this.MyTeamID == 0) {
             for (int i = 0; i < 4; i++) {
-                if (this.unitLocation[this.MyTeamID][i] == Base0){
+                if (this.unitLocation[this.MyTeamID][i].equals(Base0)){
                     if (i == 0||i == 2){
                         base_unitpair = RED_GREEN;
                     }
@@ -1096,7 +1478,7 @@ public class AI1 extends javax.swing.JFrame {
             }
         } else if (this.MyTeamID == 1) {
             for (int i = 0; i < 4; i++) {
-                if (this.unitLocation[this.MyTeamID][i] == Base1){
+                if (this.unitLocation[this.MyTeamID][i].equals(Base1)){
                     if (i == 0||i == 2){
                         base_unitpair = RED_GREEN;
                     }
@@ -1108,8 +1490,70 @@ public class AI1 extends javax.swing.JFrame {
         }
     }
 
-    public void sendtowerhold(){
-        int tower[] = new int[3];
+    public synchronized  void enableTowerUnit() {
+        if (this.MyTeamID == 0) {
+            for (int i = 0; i < 4; i++) {
+                if (this.unitLocation[this.MyTeamID][i] == Tower2) {
+                    if (i == 0 || i == 2) {
+                        tower_unitpair = RED_GREEN;
+                    }
+                    if (i == 1 || i == 3) {
+                        tower_unitpair = BLACK_YELLOW;
+                    }
+                }
+
+                if (this.unitLocation[this.MyTeamID][i] == Tower0) {
+                    if (i == 0 || i == 2) {
+                        tower_unitpair = RED_GREEN;
+                    }
+                    if (i == 1 || i == 3) {
+                        tower_unitpair = BLACK_YELLOW;
+                    }
+                }
+
+                if (this.unitLocation[this.MyTeamID][i] == Tower1) {
+                    if (i == 0 || i == 2) {
+                        tower_unitpair = RED_GREEN;
+                    }
+                    if (i == 1 || i == 3) {
+                        tower_unitpair = BLACK_YELLOW;
+                    }
+                }
+            }
+        } else if (this.MyTeamID == 1) {
+            for (int i = 0; i < 4; i++) {
+                if (this.unitLocation[this.MyTeamID][i] == Tower2) {
+                    if (i == 0 || i == 2) {
+                        tower_unitpair = RED_GREEN;
+                    }
+                    if (i == 1 || i == 3) {
+                        tower_unitpair = BLACK_YELLOW;
+                    }
+                }
+
+                if (this.unitLocation[this.MyTeamID][i] == Tower0) {
+                    if (i == 0 || i == 2) {
+                        tower_unitpair = RED_GREEN;
+                    }
+                    if (i == 1 || i == 3) {
+                        tower_unitpair = BLACK_YELLOW;
+                    }
+                }
+
+                if (this.unitLocation[this.MyTeamID][i] == Tower1) {
+                    if (i == 0 || i == 2) {
+                        tower_unitpair = RED_GREEN;
+                    }
+                    if (i == 1 || i == 3) {
+                        tower_unitpair = BLACK_YELLOW;
+                    }
+                }
+            }
+        }
+    }
+
+    public synchronized void sendtowerhold(){
+         tower= new int[3];
         if(this.towerHold[0] == this.MyTeamID){
             tower[0] = 1;
         }
@@ -1121,29 +1565,10 @@ public class AI1 extends javax.swing.JFrame {
         }
     }
 
-    public int Send_Routeinfo(){
+    public  synchronized int Send_Routeinfo(){
         return this.routeinfo;
     }
 
-    public void search_field(){
-        if (this.MyTeamID == 0) {
-            for (int i = 0; i < 4; i++) {
-
-
-            }
-        } else if (this.MyTeamID == 1) {
-            for (int i = 0; i < 4; i++) {
-                if (this.unitLocation[this.MyTeamID][i] == Base0){
-
-
-
-
-                }
-            }
-        }
-
-
-    }
 
 
 

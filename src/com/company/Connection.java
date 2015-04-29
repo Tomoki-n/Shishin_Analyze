@@ -167,6 +167,7 @@ public class Connection implements Runnable{
                     this.state = STATE_PLAY_GETBOARD;
                     this.boardInfo = new ArrayList<String>();
                     sendMessage("400 GETBORD");
+
                 } else if(num == 500){
                     //500 PLAYED
                     System.out.println("相手が１手打ちました。");
