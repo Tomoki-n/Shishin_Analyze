@@ -555,7 +555,7 @@ public class Field extends javax.swing.JPanel {
     }
 
     /** Mouseでユニットが押された場合に呼び出される */
-    public void unitClicked(int unitID){
+    public void unitClicked(int unitID) throws InterruptedException {
         this.mainFiled.selectUnit(unitID);
 
     }

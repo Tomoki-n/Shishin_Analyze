@@ -49,7 +49,7 @@ public class Main {
 
     public static String AI_type(){
         String type = null;
-        System.out.println("AI:1.Higuchi 2.Nishinaka 3.Hosono 4.Demo \n");
+        System.out.println("AI:1.Higuchi 2.Nishinaka 3.Hosono 4.Demo 5.CUI-Mode\n");
         System.out.println("input AI_NUMBER: ");
         InputStreamReader isr = new InputStreamReader(System.in);
         BufferedReader br = new BufferedReader(isr);
@@ -129,6 +129,9 @@ public class Main {
                 else if (ai2 == 4) {
                     AI3 ai = new AI3(addr, ai1, type1);
 
+                }
+                else if(ai2 == 5) {
+                    CUI ai = new CUI(addr, ai1, type1);
                 }
 
                 GAME_STATUS = 4;
