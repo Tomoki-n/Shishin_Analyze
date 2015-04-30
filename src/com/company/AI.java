@@ -125,14 +125,7 @@ public class AI extends javax.swing.JFrame {
     public static final int YELLOW  = 3;
 
 
-    /**　AI制御クラス **/
-    private Controller_Nishinaka C_Nishinaka;
 
-    private Controller_Hosono C_Hosono;
-
-    private Controller_Higuchi C_Higuchi;
-
-    private Controller_Demo C_Demo;
 
 
     /** AIの種類 **/
@@ -441,24 +434,7 @@ public class AI extends javax.swing.JFrame {
 
         if(this.sthread.state == STATE_PLAY){
 
-            switch (AI_type){
-                case 1:{
-                    ai1();break;
-                }
-                case 2:{
-                    ai2();break;
-                }
-                case 3:{
-                    ai3();break;
-                }
-                case 4:{
-                    ai_demo();break;
-                }
-                default:{
-                    ai1();
-                    break;
-                }
-            }
+
         }
 
         System.out.println(msg);
@@ -484,63 +460,6 @@ public class AI extends javax.swing.JFrame {
     }
 
 
-    public void ai1(){
-        C_Higuchi = new Controller_Higuchi(info);
-
-        int unit[] = new int[3];
-
-        unit = C_Higuchi.UnitOrder();
-
-        this.sthread.sendPlayMessage(unit[0],unit[1],unit[2]);
-
-        //higuchi
-    }
-
-    public void ai2(){
-        if(nextenable == false) {
-            C_Nishinaka = new Controller_Nishinaka(info,routeinfo);
-
-
-            int unit[][] = new int[2][3];
-            int nextorder[] = new int [3];
-           while (true){
-                unit = C_Nishinaka.UnitOrder();
-                routeinfo = C_Nishinaka.Send_Routeinfo();
-                if (unit[0][0]!=0||unit[0][1]!=0||unit[0][2]!=0)break;
-           }
-            nextorder[0] = unit[1][0]; nextorder[1] = unit[1][1]; nextorder[2] = unit[1][2];
-            nextenable = true;
-            this.sthread.sendPlayMessage(unit[0][0], unit[0][1], unit[0][2]);
-         }
-        if (nextenable == true) {
-            nextenable = false;
-            this.sthread.sendPlayMessage(nextorder[0], nextorder[1], nextorder[2]);
-        }
-   }
-
-    public void ai3(){
-        C_Hosono = new Controller_Hosono(info);
-
-        int unit[] = new int[3];
-
-        unit = C_Hosono.UnitOrder();
-
-        this.sthread.sendPlayMessage(unit[0],unit[1],unit[2]);
-
-        //Hosono
-    }
-
-    public void ai_demo(){
-        C_Demo = new Controller_Demo(info);
-
-        int unit[] = new int[3];
-
-        unit = C_Demo.UnitOrder();
-
-        this.sthread.sendPlayMessage(unit[0],unit[1],unit[2]);
-        
-        //pre
-    }
 
 
 

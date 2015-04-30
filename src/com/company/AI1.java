@@ -598,7 +598,9 @@ public class AI1 extends javax.swing.JFrame {
                    units = new int[2][3];
                    init();
                    synchronized (units) {
+
                        units = UnitOrder0();
+                       Thread.sleep(500);
                    }
                    
                    this.sthread.sendPlayMessage(units[0][0], units[0][1], units[0][2]);
@@ -613,6 +615,7 @@ public class AI1 extends javax.swing.JFrame {
                    init();
                    synchronized (units) {
                        units = UnitOrder1();
+                       Thread.sleep(500);
                    }
                    this.sthread.sendPlayMessage(units[0][0], units[0][1], units[0][2]);
                    test = 2;
@@ -693,7 +696,7 @@ public class AI1 extends javax.swing.JFrame {
 
                     break;
                     case FIELD_0_TOWER_1_CAMP_1: {
-                        sendtowerhold();
+                        tower = sendtowerhold();
                         enableBaseUnit();
 
                         if(tower[1] != 1) {
@@ -804,27 +807,35 @@ public class AI1 extends javax.swing.JFrame {
                     }
                     break;
                     case FIELD_0_TOWER_2_CAMP_0: {
-                        sendtowerhold();
+                        tower = sendtowerhold();
                         enableTowerUnit();
                         if (tower[1] == 1) {
                             unit[0][0] = setupUnit(tower_unitpair)[0];
                             unit[0][1] = Route012.x;
                             unit[0][2] = Route012.y;
-                            unit[0][0] = setupUnit(tower_unitpair)[0];
-                            unit[0][1] = Route013.x;
-                            unit[0][2] = Route013.y;
+                            unit[1][0] = setupUnit(tower_unitpair)[0];
+                            unit[1][1] = Route013.x;
+                            unit[1][2] = Route013.y;
                             return unit;
                         }
-                        if (tower[0] == 1) {
-                            unit[0][0] = setupUnit(1)[0];
+                        else if (tower[0] == 1) {
+                            unit[0][0] = setupUnit(tower_unitpair)[0];
                             unit[0][1] = Route002.x;
                             unit[0][2] = Route002.y;
-                            unit[0][0] = setupUnit(1)[1];
-                            unit[0][1] = Route003.x;
-                            unit[0][2] = Route003.y;
+                            unit[1][0] = setupUnit(tower_unitpair)[1];
+                            unit[1][1] = Route003.x;
+                            unit[1][2] = Route003.y;
                             return unit;
                         }
-
+                        else if (tower[2] == 1) {
+                            unit[0][0] = setupUnit(tower_unitpair)[0];
+                            unit[0][1] = Route002.x;
+                            unit[0][2] = Route002.y;
+                            unit[1][0] = setupUnit(tower_unitpair)[1];
+                            unit[1][1] = Route003.x;
+                            unit[1][2] = Route003.y;
+                            return unit;
+                        }
                     }
                         break;
                     case FIELD_1_TOWER_0_CAMP_1: {
@@ -1055,7 +1066,7 @@ public class AI1 extends javax.swing.JFrame {
 
                     break;
                     case FIELD_0_TOWER_1_CAMP_1: {
-                        sendtowerhold();
+                        tower = sendtowerhold();
                         enableBaseUnit();
 
                         if(tower[1] != 1) {
@@ -1166,7 +1177,7 @@ public class AI1 extends javax.swing.JFrame {
                     }
                     break;
                     case FIELD_0_TOWER_2_CAMP_0: {
-                        sendtowerhold();
+                        tower = sendtowerhold();
                         enableTowerUnit();
                         if (tower[1] == 1) {
                             unit[0][0] = setupUnit(tower_unitpair)[0];
@@ -1177,11 +1188,20 @@ public class AI1 extends javax.swing.JFrame {
                             unit[0][2] = Route113.y;
                             return unit;
                         }
-                        if (tower[0] == 1) {
-                            unit[0][0] = setupUnit(1)[0];
+                        else if (tower[0] == 1) {
+                            unit[0][0] = setupUnit(tower_unitpair)[0];
                             unit[0][1] = Route102.x;
                             unit[0][2] = Route102.y;
-                            unit[0][0] = setupUnit(1)[1];
+                            unit[0][0] = setupUnit(tower_unitpair)[1];
+                            unit[0][1] = Route103.x;
+                            unit[0][2] = Route103.y;
+                            return unit;
+                        }
+                        else if (tower[2] == 1) {
+                            unit[0][0] = setupUnit(tower_unitpair)[0];
+                            unit[0][1] = Route102.x;
+                            unit[0][2] = Route102.y;
+                            unit[0][0] = setupUnit(tower_unitpair)[1];
                             unit[0][1] = Route103.x;
                             unit[0][2] = Route103.y;
                             return unit;
@@ -1493,7 +1513,7 @@ public class AI1 extends javax.swing.JFrame {
     public synchronized  void enableTowerUnit() {
         if (this.MyTeamID == 0) {
             for (int i = 0; i < 4; i++) {
-                if (this.unitLocation[this.MyTeamID][i] == Tower2) {
+                if (this.unitLocation[this.MyTeamID][i].equals(Tower2)) {
                     if (i == 0 || i == 2) {
                         tower_unitpair = RED_GREEN;
                     }
@@ -1502,7 +1522,7 @@ public class AI1 extends javax.swing.JFrame {
                     }
                 }
 
-                if (this.unitLocation[this.MyTeamID][i] == Tower0) {
+                if (this.unitLocation[this.MyTeamID][i].equals(Tower0)) {
                     if (i == 0 || i == 2) {
                         tower_unitpair = RED_GREEN;
                     }
@@ -1511,7 +1531,7 @@ public class AI1 extends javax.swing.JFrame {
                     }
                 }
 
-                if (this.unitLocation[this.MyTeamID][i] == Tower1) {
+                if (this.unitLocation[this.MyTeamID][i].equals(Tower1)) {
                     if (i == 0 || i == 2) {
                         tower_unitpair = RED_GREEN;
                     }
@@ -1522,7 +1542,7 @@ public class AI1 extends javax.swing.JFrame {
             }
         } else if (this.MyTeamID == 1) {
             for (int i = 0; i < 4; i++) {
-                if (this.unitLocation[this.MyTeamID][i] == Tower2) {
+                if (this.unitLocation[this.MyTeamID][i].equals(Tower2)) {
                     if (i == 0 || i == 2) {
                         tower_unitpair = RED_GREEN;
                     }
@@ -1531,7 +1551,7 @@ public class AI1 extends javax.swing.JFrame {
                     }
                 }
 
-                if (this.unitLocation[this.MyTeamID][i] == Tower0) {
+                if (this.unitLocation[this.MyTeamID][i].equals(Tower0)) {
                     if (i == 0 || i == 2) {
                         tower_unitpair = RED_GREEN;
                     }
@@ -1540,7 +1560,7 @@ public class AI1 extends javax.swing.JFrame {
                     }
                 }
 
-                if (this.unitLocation[this.MyTeamID][i] == Tower1) {
+                if (this.unitLocation[this.MyTeamID][i].equals(Tower1)) {
                     if (i == 0 || i == 2) {
                         tower_unitpair = RED_GREEN;
                     }
@@ -1552,17 +1572,18 @@ public class AI1 extends javax.swing.JFrame {
         }
     }
 
-    public synchronized void sendtowerhold(){
-         tower= new int[3];
+    public synchronized int[] sendtowerhold(){
+         int[]towers= new int[3];
         if(this.towerHold[0] == this.MyTeamID){
-            tower[0] = 1;
+            towers[0] = 1;
         }
         if(this.towerHold[1] == this.MyTeamID){
-            tower[1] = 1;
+            towers[1] = 1;
         }
         if(this.towerHold[2] == this.MyTeamID){
-            tower[2] = 1;
+            towers[2] = 1;
         }
+        return towers;
     }
 
     public  synchronized int Send_Routeinfo(){
