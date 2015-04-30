@@ -1068,8 +1068,11 @@ public class AI1 extends javax.swing.JFrame {
                     case FIELD_0_TOWER_1_CAMP_1: {
                         tower = sendtowerhold();
                         enableBaseUnit();
-
-                        if(tower[1] != 1) {
+                        Random rnd1 = new Random();
+                        int x = rnd1.nextInt(3);
+                        int[] y ;
+                         y = randint(x);
+                        if(tower[2] != 1) {
                             if (base_unitpair == BLACK_YELLOW) {
                                 Random rnd = new Random();
                                 int uni = rnd.nextInt(2);
@@ -1124,7 +1127,7 @@ public class AI1 extends javax.swing.JFrame {
 
                             }
                         }
-                        if(tower[0] != 1){
+                        else if(tower[1] != 1){
                             if (base_unitpair == BLACK_YELLOW) {
                                 unit[0][0] = setupUnit(base_unitpair)[0];
                                 unit[0][1] = Route101.x;
@@ -1149,7 +1152,7 @@ public class AI1 extends javax.swing.JFrame {
                             }
                         }
 
-                        if(tower[2] != 1){
+                        else if(tower[0] != 1){
                             if (base_unitpair == BLACK_YELLOW) {
                                 unit[0][0] = setupUnit(base_unitpair)[0];
                                 unit[0][1] = Route131.x;
@@ -1179,6 +1182,9 @@ public class AI1 extends javax.swing.JFrame {
                     case FIELD_0_TOWER_2_CAMP_0: {
                         tower = sendtowerhold();
                         enableTowerUnit();
+                        Random rnd = new Random();
+                        int rot = rnd.nextInt(3);
+
                         if (tower[1] == 1) {
                             unit[0][0] = setupUnit(tower_unitpair)[0];
                             unit[0][1] = Route112.x;
@@ -1590,6 +1596,27 @@ public class AI1 extends javax.swing.JFrame {
         return this.routeinfo;
     }
 
+    public int[] randint(int i){
+
+        int[] x = new int[3];
+        if(i == 0){
+            x[0] = 0;
+            x[1] = 1;
+            x[2] = 2;
+        }
+        else if (i == 1){
+            x[0] = 1;
+            x[1] = 2;
+            x[2] = 0;
+        }
+        else if (i == 2 ){
+            x[0] = 2;
+            x[1] = 0;
+            x[2] = 1;
+        }
+
+        return x;
+    }
 
 
 
