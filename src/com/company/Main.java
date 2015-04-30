@@ -4,7 +4,6 @@ import com.company.AI;
 import com.company.AI1;
 import com.company.AI2;
 import com.company.AI3;
-import com.sun.tools.javac.comp.Check;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
