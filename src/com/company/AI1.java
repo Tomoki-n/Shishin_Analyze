@@ -1183,27 +1183,27 @@ public class AI1 extends javax.swing.JFrame {
                             unit[0][0] = setupUnit(tower_unitpair)[0];
                             unit[0][1] = Route112.x;
                             unit[0][2] = Route112.y;
-                            unit[0][0] = setupUnit(tower_unitpair)[0];
-                            unit[0][1] = Route113.x;
-                            unit[0][2] = Route113.y;
+                            unit[1][0] = setupUnit(tower_unitpair)[0];
+                            unit[1][1] = Route113.x;
+                            unit[1][2] = Route113.y;
                             return unit;
                         }
                         else if (tower[0] == 1) {
                             unit[0][0] = setupUnit(tower_unitpair)[0];
                             unit[0][1] = Route102.x;
                             unit[0][2] = Route102.y;
-                            unit[0][0] = setupUnit(tower_unitpair)[1];
-                            unit[0][1] = Route103.x;
-                            unit[0][2] = Route103.y;
+                            unit[1][0] = setupUnit(tower_unitpair)[1];
+                            unit[1][1] = Route103.x;
+                            unit[1][2] = Route103.y;
                             return unit;
                         }
                         else if (tower[2] == 1) {
                             unit[0][0] = setupUnit(tower_unitpair)[0];
                             unit[0][1] = Route102.x;
                             unit[0][2] = Route102.y;
-                            unit[0][0] = setupUnit(tower_unitpair)[1];
-                            unit[0][1] = Route103.x;
-                            unit[0][2] = Route103.y;
+                            unit[1][0] = setupUnit(tower_unitpair)[1];
+                            unit[1][1] = Route103.x;
+                            unit[1][2] = Route103.y;
                             return unit;
                         }
 
