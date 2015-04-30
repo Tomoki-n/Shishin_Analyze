@@ -31,6 +31,7 @@ public class Connection implements Runnable{
     private String myName;
     private String address;
     private AI mainFiled;
+    public boolean check =false;
 
 
 
@@ -93,7 +94,9 @@ public class Connection implements Runnable{
         sbuf.append(x);
         sbuf.append(" ");
         sbuf.append(y);
+        System.out.println(sbuf.toString());
         this.sendMessage(sbuf.toString());
+
     }
     private Pattern MSGPTN = Pattern.compile("([0-9]+) (.*)");
     private Pattern TEAMIDMSGPTN = Pattern.compile("102 TEAMID ([0-1])");
@@ -103,7 +106,7 @@ public class Connection implements Runnable{
     private int winner = -1;
 
     /** クライアントからのメッセ―ジ到着 */
-    public void getMessage(String message){
+    public void getMessage(String message) throws InterruptedException {
         this.mainFiled.addMessage("Server:"+message);
 
         //終了処理
@@ -164,10 +167,10 @@ public class Connection implements Runnable{
                     //ボード状態の取得
                     this.mainFiled.setPlayingTeamID(this.PlayerID);
                     System.out.println("貴方の手番です。");
+                    this.check = true;
                     this.state = STATE_PLAY_GETBOARD;
                     this.boardInfo = new ArrayList<String>();
                     sendMessage("400 GETBORD");
-
                 } else if(num == 500){
                     //500 PLAYED
                     System.out.println("相手が１手打ちました。");
@@ -247,6 +250,10 @@ public class Connection implements Runnable{
                     this.mainFiled.setBordState(this.boardInfo);
                     if(this.state == STATE_PLAY_GETBOARD){
                         this.state = STATE_PLAY;
+                        if(check) {
+                            this.mainFiled.addMessage("Select Unit");
+                            this.check = false;
+                        }
                     } else if(this.state == STATE_VIEW_GETBOARD){
                         this.state = STATE_GAME;
                     } else {
@@ -312,9 +319,19 @@ public class Connection implements Runnable{
             this.state = STATE_INIT;
             this.mainFiled.resetAll();
         } catch (IOException ex) {
-            this.mainFiled.addMessage("サーバとの接続が切断しました");
+            try {
+                this.mainFiled.addMessage("サーバとの接続が切断しました");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             this.state = STATE_INIT;
-            this.mainFiled.resetAll();
+            try {
+                this.mainFiled.resetAll();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

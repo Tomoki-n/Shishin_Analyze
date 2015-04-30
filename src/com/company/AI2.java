@@ -147,7 +147,7 @@ public class AI2 extends javax.swing.JFrame {
     }
 
     /** Creates new form GameField */
-    public AI2(String address,String type,String stype) {
+    public AI2(String address,String type,String stype) throws InterruptedException {
         this.serverIP = address;
         AI_type = Integer.parseInt(type);
         System.out.println("init");
@@ -157,7 +157,7 @@ public class AI2 extends javax.swing.JFrame {
     }
 
     /** 状態をすべてリセット */
-    public void resetAll() {
+    public void resetAll() throws InterruptedException {
         this.state = STATE_WAITINGPLAYER;
         //名前の入力
         this.myName = null;
@@ -384,7 +384,7 @@ public class AI2 extends javax.swing.JFrame {
 
 
     /** ユーザへのメッセージ表示 */
-    public void addMessage(String msg) {
+    public void addMessage(String msg) throws InterruptedException  {
 
         if(this.sthread.state == STATE_PLAY){
 
@@ -402,7 +402,7 @@ public class AI2 extends javax.swing.JFrame {
         }
     }
 
-    void selectUnit(int unitID) {
+    void selectUnit(int unitID) throws InterruptedException {
         if(this.state == STATE_PLAY){
             if(this.MyTeamID == this.playingTeamID){
                 this.state = STATE_PLAY_UNITSELECT;
