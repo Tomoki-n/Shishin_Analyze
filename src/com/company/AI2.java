@@ -756,4 +756,23 @@ public class AI2 extends javax.swing.JFrame {
         else return (tower_center);
     }
 
+
+    private int selectedUnit = -1;
+    void selectPoint(int x, int y) {
+        if(this.state == STATE_PLAY_UNITSELECT){
+            this.state = STATE_PLAY;
+            this.sthread.sendPlayMessage(this.selectedUnit,x,y);
+        }
+    }
+
+    void selectUnit(int unitID) throws InterruptedException {
+        if(this.state == STATE_PLAY){
+            if(this.MyTeamID == this.playingTeamID){
+                this.state = STATE_PLAY_UNITSELECT;
+                this.selectedUnit = unitID;
+                this.addMessage(unitID + "が選択されました。移動先をクリックしてください。");
+
+            }
+        }
+    }
 }
