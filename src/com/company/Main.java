@@ -114,7 +114,7 @@ public class Main {
             case 3:{
                 int ai2 = Integer.parseInt(ai1);
                 if (ai2 == 1) {
-                    AI ai = new AI(addr, ai1, type1);
+                    AI ai = new AI0(addr, ai1, type1);
 
                 }
                 else if (ai2 == 2) {

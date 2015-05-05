@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 /**
  * Created by tomoki-n on 2015/04/10.
  */
-public class AI extends javax.swing.JFrame {
+public abstract class AI extends javax.swing.JFrame {
 
     public static final int DEFALUTPORT = 13306;
     public static Color BGColor = new Color(236, 233, 216);
@@ -83,7 +83,7 @@ public class AI extends javax.swing.JFrame {
     /**
      * 順番カウント用
      */
-    private int turnState = -1;
+    protected int turnState = -1;
 
     //ターン管理
     public static final int STATE_PLAY_TURN1 = 11;
@@ -96,11 +96,11 @@ public class AI extends javax.swing.JFrame {
     /**
      * ゲーム終了の点数
      */
-    private static final int MAXPOINT = 50;
+    public static final int MAXPOINT = 50;
     /**
      * 無得点の最大ターン数
      */
-    private static final int NOPOINTTIME = 10;
+    public static final int NOPOINTTIME = 10;
 
     /** ボードの状態 */
     //public Boardinfo info;
@@ -108,67 +108,67 @@ public class AI extends javax.swing.JFrame {
     /**
      * ボードの状態
      */
-    private int state = STATE_WAITINGPLAYER;
+    protected int state = STATE_WAITINGPLAYER;
     /**
      * どちらのプレイヤーがプレイ中か　0または1になる。-1はゲーム中ではない状態
      */
-    private int playingTeamID = -1;
+    protected int playingTeamID = -1;
     /**
      * 先攻プレイヤーはどちらか
      */
-    private int firstTeamID = -1;
+    protected int firstTeamID = -1;
     /**
      * ターン数
      */
-    private int ternCount;
+    protected int ternCount;
 
     /**
      * 自分の名前
      */
-    private String myName;
+    protected String myName;
     /**
      * サーバのアドレス
      */
-    private String serverIP;
+    protected String serverIP;
     /**
      * サーバポート
      */
-    private int serverPort;
+    protected int serverPort;
     /**
      * サーバ待ち受けスレッド
      */
-    private Connection sthread;
+    protected Connection sthread;
     /**
      * セル用配列
      */
-    private Field[][] gameCell;
+    protected Field[][] gameCell;
     /**
      * ユニットの位置
      */
-    private Point[][] unitLocation;
+    protected Point[][] unitLocation;
     /**
      * 塔の保持状態
      */
-    private int[] towerHold;
-    private int towerCount = 3;
+    protected int[] towerHold;
+    protected int towerCount = 3;
     /**
      * チームの得点
      */
-    private int[] teamPoint;
+    protected int[] teamPoint;
     /**
      * 自分のチーム番号
      */
-    private int MyTeamID;
+    protected int MyTeamID;
 
 
-    private boolean nextenable = false;
-    private int[] nextorder;
+    protected boolean nextenable = false;
+    protected int[] nextorder;
     //private int routeinfo = -1;
 
     /**
      * 前のユニットの位置
      */
-    private Point[][] prevUnitLocation;
+    protected Point[][] prevUnitLocation;
 
 
     /**
@@ -188,7 +188,7 @@ public class AI extends javax.swing.JFrame {
     /**
      * AIの種類 *
      */
-    private int AI_type;
+    protected int AI_type;
 
     public static final Point Base0 = new Point(4, 7);
     public static final Point Base1 = new Point(4, 1);
@@ -475,13 +475,7 @@ public class AI extends javax.swing.JFrame {
     /**
      * ユーザへのメッセージ表示
      */
-    public void addMessage(String msg) throws InterruptedException {
-
-        if (msg == "Select Unit") {
-            //TODO: ここに自分のAI部分を書く
-        }
-        System.out.println(msg);
-    }
+    public abstract void addMessage(String msg) throws InterruptedException;
 
     public  int[] search_pos_count() {
         System.out.println("search_pos_count");
@@ -535,11 +529,12 @@ public class AI extends javax.swing.JFrame {
     }
 
     /** 1VS1の対戦
-     * 戻り値：1:勝ち 0:負け 2:引き分け -1:エラー
-     * 引数：  GREEN:0, BLACK:1, RED:2, YELLOW:3
+     * @param A_char 味方側の駒(GREEN:0, BLACK:1, RED:2, YELLOW:3)
+     * @param E_char 相手側の駒(GREEN:0, BLACK:1, RED:2, YELLOW:3)
+     * @return 1:勝ち 0:負け 2:引き分け -1:エラー
      * */
 
-    public int onevs(int A_char, int E_char){
+    public static int onevs(int A_char, int E_char){
 
         if(A_char == BLACK){
             if(E_char == BLACK){
@@ -603,10 +598,13 @@ public class AI extends javax.swing.JFrame {
     }
 
     /** 2VS2の対戦
-     * 戻り値：1:勝ち 0:負け 2:引き分け -1:エラー
-     * 引数：  GREEN:0, BLACK:1, RED:2, YELLOW:3
+     * @param A_char1 味方側の駒・1つ目(GREEN:0, BLACK:1, RED:2, YELLOW:3)
+     * @param A_char2 味方側の駒・2つ目(GREEN:0, BLACK:1, RED:2, YELLOW:3)
+     * @param E_char1 相手側の駒・1つ目(GREEN:0, BLACK:1, RED:2, YELLOW:3)
+     * @param E_char2 相手側の駒・2つ目(GREEN:0, BLACK:1, RED:2, YELLOW:3)
+     * @return 1:勝ち 0:負け 2:引き分け -1:エラー
      * */
-    public int twovs(int A_char1, int A_char2, int E_char1, int E_char2){
+    public static int twovs(int A_char1, int A_char2, int E_char1, int E_char2){
 
         if((A_char1 == BLACK && A_char2 == GREEN)||(A_char1 == GREEN && A_char2 == BLACK)){
             if((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){

@@ -12,12 +12,12 @@ import java.util.regex.Pattern;
 /**
  * Created by tomoki-n on 2015/04/10.
  */
-public class AI2 extends AI {
+public class AI0 extends AI {
 
     /**
      * Creates new form GameField
      */
-    public AI2(String address, String type, String stype) throws InterruptedException {
+    public AI0(String address, String type, String stype) throws InterruptedException {
         super(address, type, stype);
     }
 
