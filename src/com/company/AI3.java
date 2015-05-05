@@ -129,7 +129,7 @@ public class AI3 extends AI {
         for(int i = 0; i < 4; i++) {
             if(arrived_p[i] == 0) {
                 unit[0] = i;
-                int j = (int)(Math.random() * 3.0 + 1.0);
+                int j = (int)(Math.random() * 3.0);
                 unit[1] = pos[j][2].x;
                 unit[2] = pos[j][2].y;
             }
