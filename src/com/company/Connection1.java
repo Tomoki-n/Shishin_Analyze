@@ -77,7 +77,7 @@ public class Connection1 implements Runnable{
 
 
     /** サーバへのメッセージ送信 */
-    public void sendMessage(String message){
+    public synchronized  void sendMessage(String message){
         if(this.writer != null){
             this.writer.println(message);
             this.writer.flush();
@@ -86,7 +86,7 @@ public class Connection1 implements Runnable{
 
 
     /** サーバにユニットの行動を送信 **/
-    public void sendPlayMessage(int selectedUnit, int x, int y) {
+    public synchronized void sendPlayMessage(int selectedUnit, int x, int y) {
         StringBuilder sbuf = new StringBuilder();
         sbuf.append("405 PLAY ");
         sbuf.append(selectedUnit);
@@ -106,7 +106,7 @@ public class Connection1 implements Runnable{
     private int winner = -1;
 
     /** クライアントからのメッセ―ジ到着 */
-    public void getMessage(String message) throws InterruptedException {
+    public synchronized void getMessage(String message) throws InterruptedException {
         this.mainFiled.addMessage("Server:"+message);
 
         //終了処理
