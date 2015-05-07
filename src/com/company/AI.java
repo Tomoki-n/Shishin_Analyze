@@ -12,31 +12,10 @@ import java.util.regex.Pattern;
 /**
  * Created by tomoki-n on 2015/04/10.
  */
-public abstract class AI extends javax.swing.JFrame {
+public abstract class AI {
 
     public static final int DEFALUTPORT = 13306;
     public static Color BGColor = new Color(236, 233, 216);
-    //public static int ObstacleCount = 4;
-
-    /**
-     * ２点の距離を計算（上下左右、斜めのどこでも１歩）
-     */
-    public static int distance(Point a, Point b) {
-        if (a.x == b.x) {
-            return Math.abs(a.y - b.y);
-        } else if (a.y == b.y) {
-            return Math.abs(a.x - b.x);
-        } else {
-            //斜めに近づく場合は長い方と同じだけで大丈夫
-            int xdef = Math.abs(a.x - b.x);
-            int ydef = Math.abs(a.y - b.y);
-            if (xdef > ydef) {
-                return xdef;
-            } else {
-                return ydef;
-            }
-        }
-    }
 
     //盤面のタイプ
     /**
@@ -102,9 +81,6 @@ public abstract class AI extends javax.swing.JFrame {
      */
     public static final int NOPOINTTIME = 10;
 
-    /** ボードの状態 */
-    //public Boardinfo info;
-
     /**
      * ボードの状態
      */
@@ -139,10 +115,6 @@ public abstract class AI extends javax.swing.JFrame {
      */
     protected Connection sthread;
     /**
-     * セル用配列
-     */
-    protected Field[][] gameCell;
-    /**
      * ユニットの位置
      */
     protected Point[][] unitLocation;
@@ -150,7 +122,7 @@ public abstract class AI extends javax.swing.JFrame {
      * 塔の保持状態
      */
     protected int[] towerHold;
-    protected int towerCount = 3;
+    protected static final int towerCount = 3;
     /**
      * チームの得点
      */
@@ -159,11 +131,6 @@ public abstract class AI extends javax.swing.JFrame {
      * 自分のチーム番号
      */
     protected int MyTeamID;
-
-
-    protected boolean nextenable = false;
-    protected int[] nextorder;
-    //private int routeinfo = -1;
 
     /**
      * 前のユニットの位置
@@ -178,12 +145,6 @@ public abstract class AI extends javax.swing.JFrame {
     public static final int BLACK = 1;
     public static final int RED = 2;
     public static final int YELLOW = 3;
-
-
-
-
-
-
 
     /**
      * AIの種類 *
@@ -206,11 +167,6 @@ public abstract class AI extends javax.swing.JFrame {
      */
     public int victoryTeamID = -1;
 
-
-    public static int PointValue2TrueValue(int v) {
-        return v + 1;
-    }
-
     /**
      * Creates new form GameField
      */
@@ -219,7 +175,6 @@ public abstract class AI extends javax.swing.JFrame {
         AI_type = Integer.parseInt(type);
         System.out.println("init");
         this.resetAll();
-        this.paintComponents();
         this.sthread.sendName();
     }
 
@@ -294,14 +249,6 @@ public abstract class AI extends javax.swing.JFrame {
     }
 
     /**
-     * 表示項目の一新
-     */
-    private void paintComponents() {
-
-
-    }
-
-    /**
      * 先行かどうかを返す
      */
     public boolean isFirstPlayer(int myID) {
@@ -338,7 +285,6 @@ public abstract class AI extends javax.swing.JFrame {
         if (teamNumber == 0) {
         } else if (teamNumber == 1) {
         }
-        this.paintComponents();
     }
 
     /**
@@ -388,7 +334,6 @@ public abstract class AI extends javax.swing.JFrame {
 
             }
         }
-        paintComponents();
         return 0;
     }
 
@@ -403,7 +348,6 @@ public abstract class AI extends javax.swing.JFrame {
         this.setTeamName(otherid, name);
         this.firstTeamID = 0;
         this.state = STATE_PLAY;
-        paintComponents();
         return 0;
     }
 
@@ -451,7 +395,6 @@ public abstract class AI extends javax.swing.JFrame {
                 //this.prevUnitLocation[team][unitnum] = this.unitLocation[team][unitnum];
                 this.unitLocation[team][unitnum] = pos;
 
-
             } else if (omc.matches()) {
                 int ovstnum = Integer.parseInt(omc.group(1));//障害物ID
                 int xpos = Integer.parseInt(omc.group(2));
@@ -469,62 +412,49 @@ public abstract class AI extends javax.swing.JFrame {
 
             }
         }
-        this.paintComponents();
     }
 
     /**
-     * ユーザへのメッセージ表示
+     * ユーザへのメッセージ表示。各AIが実装する部分
      */
     public abstract void addMessage(String msg) throws InterruptedException;
 
-    public  int[] search_pos_count() {
-        System.out.println("search_pos_count");
+    /**
+     * 自軍の駒が、本陣、タワー、それ以外の場所に何個いるかを求める
+     * @return 自軍の、本陣にいる駒の数を[0]に、タワーにいる駒の数を[1]に、それ以外のマスにいる駒の数[2]に格納した配列
+     */
+    public int[] search_pos_count() {
+        return search_pos_count(this.MyTeamID);
+    }
+
+    /**
+     * 指定した軍の駒が、本陣、タワー、それ以外の場所に何個いるかを求める
+     * @param teamID 駒の数を求める軍のID。先手が0、後手が1
+     * @return teamIDで指定した軍の、本陣にいる駒の数を[0]に、タワーにいる駒の数を[1]に、それ以外のマスにいる駒の数[2]に格納した配列
+     */
+    public int[] search_pos_count(int teamID) {
+        System.out.printf("search_pos_count : %d\n", teamID);
         int field_count = 4;
         int base_count = 0;
         int tower_count = 0;
         int[] unit1 = new int[3];
-        if (this.MyTeamID == 0) {
-            for (int i = 0; i < 4; i++) {
-                if (this.unitLocation[this.MyTeamID][i].equals(Base0)) {
-                    base_count++;
-                }
-                if (this.unitLocation[this.MyTeamID][i].equals(tower_left)) {
-                    tower_count++;
-                }
-                if (this.unitLocation[this.MyTeamID][i].equals(tower_right)) {
-                    tower_count++;
-                }
-                if (this.unitLocation[this.MyTeamID][i].equals(tower_center)) {
-                    tower_count++;
-                }
+        for (int i = 0; i < 4; i++) {
+            if (teamID == 0 && this.unitLocation[teamID][i].equals(Base0)) {
+                base_count++;
+            } else if (teamID == 1 && this.unitLocation[teamID][i].equals(Base1)) {
+                base_count++;
+            } else if (this.unitLocation[teamID][i].equals(tower_left)) {
+                tower_count++;
+            } else if (this.unitLocation[teamID][i].equals(tower_right)) {
+                tower_count++;
+            } else if(this.unitLocation[teamID][i].equals(tower_center)) {
+                tower_count++;
             }
-
-            unit1[0] = base_count;
-            unit1[1] = tower_count;
-            unit1[2] = field_count - base_count - tower_count;
-            return unit1;
         }
-        if (this.MyTeamID == 1) {
-            for (int i = 0; i < 4; i++) {
-                if (this.unitLocation[this.MyTeamID][i].equals(Base1)) {
-                    base_count++;
-                }
-                if (this.unitLocation[this.MyTeamID][i].equals(tower_left)) {
-                    tower_count++;
-                }
-                if (this.unitLocation[this.MyTeamID][i].equals(tower_right)) {
-                    tower_count++;
-                }
-                if (this.unitLocation[this.MyTeamID][i].equals(tower_center)) {
-                    tower_count++;
-                }
-            }
 
-            unit1[0] = base_count;
-            unit1[1] = tower_count;
-            unit1[2] = field_count - base_count - tower_count;
-            return unit1;
-        }
+        unit1[0] = base_count;
+        unit1[1] = tower_count;
+        unit1[2] = field_count - base_count - tower_count;
         return unit1;
     }
 
@@ -730,19 +660,40 @@ public abstract class AI extends javax.swing.JFrame {
 
         return -1;
     }
+    
+    /**
+     * ２点の距離を計算（上下左右、斜めのどこでも１歩）
+     */
+    public static int distance(Point a, Point b) {
+        if (a.x == b.x) {
+            return Math.abs(a.y - b.y);
+        } else if (a.y == b.y) {
+            return Math.abs(a.x - b.x);
+        } else {
+            //斜めに近づく場合は長い方と同じだけで大丈夫
+            int xdef = Math.abs(a.x - b.x);
+            int ydef = Math.abs(a.y - b.y);
+            if (xdef > ydef) {
+                return xdef;
+            } else {
+                return ydef;
+            }
+        }
+    }
+
 
     /** 得点差 */
     public int getPoint(){
-        int i,j;
-        i=teamPoint[0]-teamPoint[1];
-        if(i>0)  victoryTeamID=0;
-        else if(i<0)  victoryTeamID=1;
+        int i, j;
+        i = teamPoint[0] - teamPoint[1];
+        if(i > 0) victoryTeamID = 0;
+        else if(i < 0) victoryTeamID = 1;
 
         return Math.abs(i);
     }
 
     /** 最も近いタワー */
-    public Point getNearestTower(Point pos) {
+    public static Point getNearestTower(Point pos) {
         int i, j, k;
         i = distance(pos, tower_left);
         j = distance(pos, tower_center);
@@ -752,25 +703,5 @@ public abstract class AI extends javax.swing.JFrame {
         else if (j < i && j < k) return (tower_center);
         else if (k < i && k < j) return (tower_right);
         else return (tower_center);
-    }
-
-
-    private int selectedUnit = -1;
-    void selectPoint(int x, int y) {
-        if(this.state == STATE_PLAY_UNITSELECT){
-            this.state = STATE_PLAY;
-            this.sthread.sendPlayMessage(this.selectedUnit,x,y);
-        }
-    }
-
-    void selectUnit(int unitID) throws InterruptedException {
-        if(this.state == STATE_PLAY){
-            if(this.MyTeamID == this.playingTeamID){
-                this.state = STATE_PLAY_UNITSELECT;
-                this.selectedUnit = unitID;
-                this.addMessage(unitID + "が選択されました。移動先をクリックしてください。");
-
-            }
-        }
     }
 }

@@ -34,7 +34,7 @@ public class AI3 extends AI {
      * @return 駒の動きを示す配列。[0]が駒のID、[1]が移動先のX座標、[2]が移動先のY座標を示す
      */
     private int[] move_demo01() {
-        // codename: Foolhardiness
+        // codename: Foolhardiness (蛮勇)
 
         //送信するコード
         int unit[] = new int[3];
