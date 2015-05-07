@@ -1,9 +1,6 @@
 package com.company;
 
-import com.company.AI;
-import com.company.AI1;
-import com.company.AI2;
-import com.company.AI3;
+import com.company.AI.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -69,24 +66,8 @@ public class Main {
         return str.matches(pattern);
     }
 
-    public static String Connect_type(){
-        String type = null;
-        System.out.println("0:CONNECT 1:RECONNECT \n");
-        System.out.println("input NUMBER: ");
-        InputStreamReader isr = new InputStreamReader(System.in);
-        BufferedReader br = new BufferedReader(isr);
-
-        try{
-            type = br.readLine();
-
-        }catch(Exception e){
-            AI_type();
-        }
-        type = ai1;
-        return type;
-    }
     public static void smain() throws InterruptedException {
-        if(GAME_STATUS ==4){
+        if(GAME_STATUS ==3){
             System.exit(0);
         }
 
@@ -105,13 +86,7 @@ public class Main {
 
                 break;
             }
-            case 2: {
-                type1 = Connect_type();
-                GAME_STATUS = 3;
-                smain();
-                break;
-            }
-            case 3:{
+            case 2:{
                 int ai2 = Integer.parseInt(ai1);
                 if (ai2 == 1) {
                     AI ai = new AI0(addr, ai1, type1);
@@ -134,7 +109,7 @@ public class Main {
                     CUI ai = new CUI(addr, ai1, type1);
                 }
 
-                GAME_STATUS = 4;
+                GAME_STATUS = 3;
                 break;
             }
             default:

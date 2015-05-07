@@ -1,5 +1,7 @@
-package com.company;
+package com.company.AI;
 
+
+import com.company.AI.AI;
 
 import java.io.*;
 import java.util.regex.Matcher;

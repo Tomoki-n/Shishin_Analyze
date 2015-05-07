@@ -1,5 +1,7 @@
 package com.company;
 
+import com.company.AI.AI;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -68,7 +70,7 @@ public class Connection implements Runnable{
     }
 
     /** サーバへの再説毒　**/
-    public void reconnnect(){
+    public void reconnect(){
         if(this.state != STATE_INIT){
             return;
         }

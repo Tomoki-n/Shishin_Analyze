@@ -1,23 +1,18 @@
-package com.company;
+package com.company.AI;
 
 
-import java.awt.*;
-import java.io.*;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.company.AI.AI;
 
 
 /**
  * Created by tomoki-n on 2015/04/10.
  */
-public class AI0 extends AI {
+public class AI2 extends AI {
 
     /**
      * Creates new form GameField
      */
-    public AI0(String address, String type, String stype) throws InterruptedException {
+    public AI2(String address, String type, String stype) throws InterruptedException {
         super(address, type, stype);
     }
 

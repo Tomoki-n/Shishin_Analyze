@@ -1,5 +1,7 @@
-package com.company;
+package com.company.AI;
 
+
+import com.company.Connection;
 
 import java.awt.*;
 import java.io.*;

@@ -1,15 +1,10 @@
-package com.company;
+package com.company.AI;
 
 
-import javax.swing.*;
+import com.company.AI.AI;
+
 import java.awt.*;
-import java.io.*;
-import java.net.UnknownHostException;
-import java.lang.Object.*;
-import java.util.ArrayList;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
