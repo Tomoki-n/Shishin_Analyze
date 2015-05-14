@@ -1,8 +1,6 @@
 package com.company.AI;
 
 
-import com.company.AI.AI;
-
 import java.awt.*;
 import java.util.Random;
 
@@ -1355,7 +1353,7 @@ public class AI1 extends AI {
     //unit[0] = base_count; unit[1] = tower_count; unit[2] = field_count;
     public synchronized int[] init() {
         int[] x = new int[2];
-        if (this.ternCount == FIRST_TURN) {
+        if (this.turnCount == FIRST_TURN) {
             STATE = FIRST_MYTURN1;
 
         }

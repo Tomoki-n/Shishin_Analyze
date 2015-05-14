@@ -32,7 +32,7 @@ public class Connection implements Runnable{
     public int state;
     private String myName;
     private String address;
-    private AI mainFiled;
+    private AI mainField;
     public boolean check =false;
 
 
@@ -40,7 +40,7 @@ public class Connection implements Runnable{
     private int PlayerID;
 
     public Connection(String name,AI main){
-        this.mainFiled = main;
+        this.mainField = main;
         this.myName = name;
         state = STATE_NOCONECTION;
     }
@@ -69,7 +69,7 @@ public class Connection implements Runnable{
         System.out.println("Send Name");
     }
 
-    /** サーバへの再説毒　**/
+    /** サーバへの再接続　**/
     public void reconnect(){
         if(this.state != STATE_INIT){
             return;
@@ -89,6 +89,12 @@ public class Connection implements Runnable{
 
     /** サーバにユニットの行動を送信 **/
     public synchronized void sendPlayMessage(int selectedUnit, int x, int y) {
+        //打った手を一時的に保存
+        this.mainField.prevMove[0] = selectedUnit;
+        this.mainField.prevMove[1] = x;
+        this.mainField.prevMove[2] = y;
+
+        //ユニットの行動をサーバ側に送信
         StringBuilder sbuf = new StringBuilder();
         sbuf.append("405 PLAY ");
         sbuf.append(selectedUnit);
@@ -109,7 +115,7 @@ public class Connection implements Runnable{
 
     /** クライアントからのメッセ―ジ到着 */
     public synchronized void getMessage(String message) throws InterruptedException {
-        this.mainFiled.addMessage("Server:"+message);
+        this.mainField.addMessage("Server:" + message);
 
         //終了処理
         if(message.toUpperCase().equals("203 EXIT")){
@@ -118,7 +124,7 @@ public class Connection implements Runnable{
                 this.connectedSocket.close();
             } catch (IOException ex) {
                 System.out.println("サーバ切断時にエラーが発生しました");
-                this.mainFiled.resetAll();
+                this.mainField.resetAll();
             }
             return;
         }
@@ -146,7 +152,7 @@ public class Connection implements Runnable{
                     Matcher nmc = TEAMIDMSGPTN.matcher(message);
                     if(nmc.matches()){
                         this.PlayerID = Integer.parseInt(nmc.group(1));
-                        this.mainFiled.setMyTeamID(this.PlayerID);
+                        this.mainField.setMyTeamID(this.PlayerID);
                     }
                 }
                 if(num == 104){
@@ -154,7 +160,7 @@ public class Connection implements Runnable{
                     Matcher nmc = ADVERSARYMSGPTN.matcher(message);
                     if(nmc.matches()){
                         String advName = nmc.group(1);
-                        this.mainFiled.adversHasCome(advName);
+                        this.mainField.adversHasCome(advName);
                         this.state = STATE_GAME;
                     }
                     if(this.PlayerID == 1){
@@ -167,7 +173,7 @@ public class Connection implements Runnable{
                     //プレイ要求
                     this.state = STATE_PLAY;
                     //ボード状態の取得
-                    this.mainFiled.setPlayingTeamID(this.PlayerID);
+                    this.mainField.setPlayingTeamID(this.PlayerID);
                     System.out.println("貴方の手番です。");
                     this.check = true;
                     this.state = STATE_PLAY_GETBOARD;
@@ -176,51 +182,51 @@ public class Connection implements Runnable{
                 } else if(num == 500){
                     //500 PLAYED
                     System.out.println("相手が１手打ちました。");
-                    this.mainFiled.doPlay();
-                    if(this.mainFiled.whoIsPlay() == -1){
+                    this.mainField.doPlay();
+                    if(this.mainField.whoIsPlay() == -1){
                         //ターンが終わっていた場合は何もしない
-                    } else if(this.PlayerID != this.mainFiled.whoIsPlay()){
+                    } else if(this.PlayerID != this.mainField.whoIsPlay()){
                         //相手のターンだった場合
-                        this.mainFiled.addMessage("相手の手を待っています。");
+                        this.mainField.addMessage("相手の手を待っています。");
                         this.state = STATE_VIEW_GETBOARD;
                         this.boardInfo = new ArrayList<String>();
                         sendMessage("400 GETBORD");
                     }
                 } else if(num == 501){
                     //501 PHASEEND
-                    this.mainFiled.addMessage("ターン終了");
-                    if(this.mainFiled.isFirstPlayer(this.PlayerID)){
+                    this.mainField.addMessage("ターン終了");
+                    if(this.mainField.isFirstPlayer(this.PlayerID)){
                         //先攻でターンが終わった場合は次は待つことになる。
-                        this.mainFiled.changeFirstTeam();
-                        this.mainFiled.resetTurnState();
-                        this.mainFiled.setPlayingTeamID((this.PlayerID+1)%2);
-                        this.mainFiled.addMessage("相手の手を待っています。");
+                        this.mainField.changeFirstTeam();
+                        this.mainField.resetTurnState();
+                        this.mainField.setPlayingTeamID((this.PlayerID+1)%2);
+                        this.mainField.addMessage("相手の手を待っています。");
                         this.boardInfo = new ArrayList<String>();
                         this.state = STATE_VIEW_GETBOARD;
                         sendMessage("400 GETBORD");
                     } else {
                         //後攻でターンが終わった場合はすぐに404が来るのでボードは読み直さない
-                        this.mainFiled.changeFirstTeam();
-                        this.mainFiled.resetTurnState();
+                        this.mainField.changeFirstTeam();
+                        this.mainField.resetTurnState();
                     }
                 } else if(num == 600){
                     //600 MSG
                     String chat = mc.group(2);
-                    this.mainFiled.addMessage(chat);
+                    this.mainField.addMessage(chat);
                 }
             } else if(this.state == STATE_PLAY){
                 if(num == 200){
                     //プレイ結果がOKだった場合
                     this.state = STATE_GAME;
-                    this.mainFiled.doPlay();
+                    this.mainField.doPlay();
 
                     //ボード状態の取得
-                    if(this.mainFiled.whoIsPlay() == -1){
+                    if(this.mainField.whoIsPlay() == -1){
                         //ターンが終わっていた場合は何もしない
-                    } else if(this.PlayerID != this.mainFiled.whoIsPlay()){
+                    } else if(this.PlayerID != this.mainField.whoIsPlay()){
                         //相手のターンだった場合
-                        this.mainFiled.setPlayingTeamID(this.mainFiled.whoIsPlay());
-                        this.mainFiled.addMessage("相手の手を待っています。");
+                        this.mainField.setPlayingTeamID(this.mainField.whoIsPlay());
+                        this.mainField.addMessage("相手の手を待っています。");
                         this.state = STATE_VIEW_GETBOARD;
                         this.boardInfo = new ArrayList<String>();
                         sendMessage("400 GETBORD");
@@ -228,10 +234,10 @@ public class Connection implements Runnable{
                 } else if(num == 600){
                     //600 MSG
                     String chat = mc.group(2);
-                    this.mainFiled.addMessage(chat);
+                    this.mainField.addMessage(chat);
                 } else {
                     //不可能な手
-                    this.mainFiled.addMessage("その位置には移動できません。");
+                    this.mainField.addMessage("その位置には移動できません。");
                     this.state = STATE_GAME;
                 }
             } else if(this.state == STATE_PLAY_GETBOARD || this.state == STATE_VIEW_GETBOARD || this.state == STATE_FINISH_GETBOARD ){
@@ -249,11 +255,11 @@ public class Connection implements Runnable{
                     this.boardInfo.add(message);
                 } else if(num == 202){
                     //行の終了
-                    this.mainFiled.setBordState(this.boardInfo);
+                    this.mainField.setBordState(this.boardInfo);
                     if(this.state == STATE_PLAY_GETBOARD){
                         this.state = STATE_PLAY;
                         if(check) {
-                            this.mainFiled.addMessage("Select Unit");
+                            this.mainField.addMessage("Select Unit");
                             this.check = false;
                         }
                     } else if(this.state == STATE_VIEW_GETBOARD){
@@ -261,28 +267,28 @@ public class Connection implements Runnable{
                     } else {
                         if(winner == -1){
                             System.out.println("ゲーム終了");
-                            this.mainFiled.addMessage("引き分けでした。");
+                            this.mainField.addMessage("引き分けでした。");
                         } else if(this.PlayerID == winner){
                             System.out.println("ゲーム終了");
-                            this.mainFiled.addMessage("あなたの勝利です！");
+                            this.mainField.addMessage("あなたの勝利です！");
                         } else {
                             System.out.println("ゲーム終了");
-                            this.mainFiled.addMessage("あなたの敗北です！");
+                            this.mainField.addMessage("あなたの敗北です！");
                         }
                         this.state = STATE_FINISH;
                         System.out.println("ゲーム終了");
-                        this.mainFiled.addMessage("メニューからリセットしてください。");
+                        this.mainField.addMessage("メニューからリセットしてください。");
                     }
                 } else if(num == 600){
                     //600 MSG
                     String chat = mc.group(2);
-                    this.mainFiled.addMessage(chat);
+                    this.mainField.addMessage(chat);
                 }
             } else if(this.state == STATE_FINISH){
                 if(num == 600){
                     //600 MSG
                     String chat = mc.group(2);
-                    this.mainFiled.addMessage(chat);
+                    this.mainField.addMessage(chat);
                 } else {
                     this.sendMessage("300 MESSAGE SYNTAX ERROR");
                 }
@@ -317,18 +323,18 @@ public class Connection implements Runnable{
             while((mssage = this.reader.readLine())!= null){
                 this.getMessage(mssage);
             }
-            this.mainFiled.addMessage("サーバとの接続が切断しました");
+            this.mainField.addMessage("サーバとの接続が切断しました");
             this.state = STATE_INIT;
-            this.mainFiled.resetAll();
+            this.mainField.resetAll();
         } catch (IOException ex) {
             try {
-                this.mainFiled.addMessage("サーバとの接続が切断しました");
+                this.mainField.addMessage("サーバとの接続が切断しました");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             this.state = STATE_INIT;
             try {
-                this.mainFiled.resetAll();
+                this.mainField.resetAll();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

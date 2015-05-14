@@ -16,8 +16,7 @@ import java.util.regex.Pattern;
  */
 public abstract class AI {
 
-    public static final int DEFALUTPORT = 13306;
-    public static Color BGColor = new Color(236, 233, 216);
+    public static final int DEFAULTPORT = 13306;
 
     //盤面のタイプ
     /**
@@ -98,7 +97,7 @@ public abstract class AI {
     /**
      * ターン数
      */
-    protected int ternCount;
+    protected int turnCount;
 
     /**
      * 自分の名前
@@ -138,6 +137,7 @@ public abstract class AI {
      * 前のユニットの位置
      */
     protected Point[][] prevUnitLocation;
+    public int[] prevMove;
 
 
     /**
@@ -193,7 +193,7 @@ public abstract class AI {
             System.exit(0);
         }
 
-        this.serverPort = DEFALUTPORT;
+        this.serverPort = DEFAULTPORT;
 
         //サーバに接続する
         this.sthread = new Connection(this.myName, this);
@@ -215,28 +215,42 @@ public abstract class AI {
         //正しく接続できたら処理開始
         this.playingTeamID = -1;
         this.firstTeamID = -1;
-        this.ternCount = 0;
+        this.turnCount = 0;
         this.boardType = BOARD_TYPE_UNDEFINED;
 
         this.unitLocation = new Point[2][4];
+        this.prevUnitLocation = new Point[2][4];
+        this.prevMove = new int[3];
         for (int i = 0; i < 4; i++) {
             this.unitLocation[0][i] = new Point(4, 7);
             this.unitLocation[1][i] = new Point(4, 1);
+            this.prevUnitLocation[0][i] = new Point(4, 7);
+            this.prevUnitLocation[1][i] = new Point(4, 1);
+        }
 
-            this.towerHold = new int[towerCount];
+        this.towerHold = new int[towerCount];
 
-            for (int j = 0; i < towerCount; i++) {
-                this.towerHold[j] = -1;
+         for (int i = 0; i < towerCount; i++) {
+             this.towerHold[i] = -1;
+         }
 
-            }
-
-            this.teamPoint = new int[2];
-            this.teamPoint[0] = 0;
-            this.teamPoint[1] = 0;
+         this.teamPoint = new int[2];
+         this.teamPoint[0] = 0;
+         this.teamPoint[1] = 0;
 
 
-            this.resetTurnState();
+         this.resetTurnState();
+    }
 
+    /**
+     * 敵軍のIDを求める
+     * @return 敵軍のチームID
+     */
+    public int EnemyTeamID() {
+        if(this.MyTeamID == 0) {
+            return 1;
+        } else {
+            return 0;
         }
     }
 
@@ -245,7 +259,7 @@ public abstract class AI {
      */
     public void resetTurnState() {
         this.turnState = STATE_PLAY_TURN1;
-        this.ternCount++;
+        this.turnCount++;
 
 
     }
@@ -394,7 +408,7 @@ public abstract class AI {
                 int xpos = Integer.parseInt(umc.group(3));
                 int ypos = Integer.parseInt(umc.group(4));
                 Point pos = new Point(xpos, ypos);
-                //this.prevUnitLocation[team][unitnum] = this.unitLocation[team][unitnum];
+                this.prevUnitLocation[team][unitnum] = this.unitLocation[team][unitnum];
                 this.unitLocation[team][unitnum] = pos;
 
             } else if (omc.matches()) {
@@ -412,6 +426,98 @@ public abstract class AI {
                 int value = Integer.parseInt(smc.group(2));
                 this.teamPoint[team] = value;
 
+            }
+        }
+
+        //盤面タイプ判定
+        this.analyzeBoardType();
+    }
+
+    /**
+     * ボードの種類を判定する
+     */
+    private void analyzeBoardType() {
+        switch (this.boardType) {
+            case BOARD_TYPE_A:
+            case BOARD_TYPE_B:
+            case BOARD_TYPE_C:
+            case BOARD_TYPE_D:
+                //盤面状態確定済みであるため、何もしない
+                return;
+        }
+
+        //TODO:自分の指した手による判断
+
+        //移動前後の場所でのみ判断
+        for(int team = 0; team < 2; team++) {
+            for(int unit = 0; unit < 4; unit++) {
+                //わざわざ配列の位置で指定するのがめんどいのと、見易さのため、以降移動前後の位置をaとbで表記
+                Point a = prevUnitLocation[team][unit];
+                Point b = unitLocation[team][unit];
+
+                //移動距離が1以下の場合、動いていないか、動いていてもワープを使用していない可能性があるので判定に用いない
+                if(distance(a, b) <= 1) {
+                    continue;
+                }
+
+                //左と下、右と上が繋がっていればAかB、左と上、右と下が繋がっていればCかD
+                if((a.x == 0 && b.y == 8) || (a.x == 8 && b.y == 0)) {
+                    if(a.y == 4 || b.x == 4) {
+                        this.boardType = BOARD_TYPE_AB;
+                    } else if((a.y < 4 && b.x < 4) || (a.y > 4 && b.x > 4)) {
+                        this.boardType = BOARD_TYPE_A;
+                    } else {
+                        this.boardType = BOARD_TYPE_B;
+                    }
+                } else if((a.y == 0 && b.x == 8) || (a.y == 8 && b.x == 0)) {
+                    if(a.x == 4 || b.y == 4) {
+                        this.boardType = BOARD_TYPE_AB;
+                    } else if((a.x < 4 && b.y < 4) || (a.x > 4 && b.y > 4)) {
+                        this.boardType = BOARD_TYPE_A;
+                    } else {
+                        this.boardType = BOARD_TYPE_B;
+                    }
+                } else if((a.x == 0 && b.y == 0) || (a.x == 8 && b.y == 8)) {
+                    if(a.y == 4 || b.x == 4) {
+                        this.boardType = BOARD_TYPE_CD;
+                    } else if((a.y < 4 && b.x > 4) || (a.y > 4 && b.x < 4)) {
+                        this.boardType = BOARD_TYPE_C;
+                    } else {
+                        this.boardType = BOARD_TYPE_D;
+                    }
+                } else if((a.y == 0 && b.x == 0) || (a.y == 8 && b.x == 8)) {
+                    if(a.x == 4 || b.y == 4) {
+                        this.boardType = BOARD_TYPE_CD;
+                    } else if((a.x < 4 && b.y > 4) || (a.x > 4 && b.y < 4)) {
+                        this.boardType = BOARD_TYPE_C;
+                    } else {
+                        this.boardType = BOARD_TYPE_D;
+                    }
+                } else {
+                    //盤面タイプ決定に使用されない。この後の表示部分を行わないようにするためcontinueをはさんだ
+                    continue;
+                }
+
+                switch (this.boardType) {
+                    case BOARD_TYPE_A:
+                        System.out.println("盤面タイプ確定：A");
+                        break;
+                    case BOARD_TYPE_B:
+                        System.out.println("盤面タイプ確定：B");
+                        break;
+                    case BOARD_TYPE_C:
+                        System.out.println("盤面タイプ確定：C");
+                        break;
+                    case BOARD_TYPE_D:
+                        System.out.println("盤面タイプ確定：D");
+                        break;
+                    case BOARD_TYPE_AB:
+                        System.out.println("盤面タイプ半確定：AまたはB");
+                        break;
+                    case BOARD_TYPE_CD:
+                        System.out.println("盤面タイプ半確定：CまたはD");
+                        break;
+                }
             }
         }
     }
