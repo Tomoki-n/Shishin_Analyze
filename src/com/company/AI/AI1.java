@@ -1,7 +1,10 @@
 package com.company.AI;
 
 
+import com.company.HttpConnection;
+
 import java.awt.*;
+import java.io.IOException;
 import java.util.Random;
 
 
@@ -143,7 +146,7 @@ public class AI1 extends AI {
      * ユーザへのメッセージ表示
      */
     @Override
-    public void addMessage(String msg) throws InterruptedException {
+    public void addMessage(String msg) throws InterruptedException{
 
         if (msg == "Select Unit") {
            if(MyTeamID == 0) { //int unit[][] = new int[2][3];
@@ -151,7 +154,6 @@ public class AI1 extends AI {
                    units = new int[2][3];
                    init();
                    synchronized (units) {
-
                        units = UnitOrder0();
                        Thread.sleep(500);
                    }
