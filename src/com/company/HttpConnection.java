@@ -35,6 +35,7 @@ public class HttpConnection {
 
         URL apiUrl = new URL("http://133.242.149.177/user/regist/" + user0 + "/" + user1 + "/" );
 
+        System.out.println(apiUrl);
         //webから取得していく
         String line, json = "";
         BufferedReader reader = new BufferedReader(new InputStreamReader(apiUrl.openStream(), "UTF-8"));
@@ -76,6 +77,7 @@ public class HttpConnection {
 
         URL apiUrl = new URL("http://133.242.149.177/score/regist/" + game_id +"/"+ turn + "/" + user0_score + "/" + user1_score + "/" );
 
+        System.out.println(apiUrl);
         //webから取得していく
         String line, json = "";
         BufferedReader reader = new BufferedReader(new InputStreamReader(apiUrl.openStream(), "UTF-8"));
@@ -96,8 +98,9 @@ public class HttpConnection {
                 parser.nextToken();
                 if (name.equals("Id")) {
                     //名前
-                    this.setId(parser.getText());
-
+                    if (parser.getText().equals("OK")) {
+                        return true;
+                    }
                 } else {
                     //想定外のものは無視して次へ
                     parser.skipChildren();
@@ -105,17 +108,47 @@ public class HttpConnection {
             }
         }
 
-        if (Game_id != "")
-            return true;
-        else
             return false;
     }
 
 
 
-    public synchronized boolean SendEndScore(int game_id ,int turn,int user0_score,int user1_score){
+    public synchronized boolean SendEndScore(String game_id ,int turn,int user0_score,int user1_score) throws IOException {
 
-    return true;
+        URL apiUrl = new URL("http://133.242.149.177/score/e_score/" + game_id +"/"+ turn + "/" + user0_score + "/" + user1_score + "/" );
+
+        System.out.println(apiUrl);
+        //webから取得していく
+        String line, json = "";
+        BufferedReader reader = new BufferedReader(new InputStreamReader(apiUrl.openStream(), "UTF-8"));
+        while ((line = reader.readLine()) != null) {
+            json += line;
+        }
+        reader.close();
+
+        // JsonFactoryの生成
+        JsonFactory factory = new JsonFactory();
+        // JsonParserの取得
+        JsonParser parser = factory.createJsonParser(json);
+
+        //JSONのパース処理
+        while (parser.nextToken() != JsonToken.END_OBJECT) {
+            String name = parser.getCurrentName();
+            if (name != null) {
+                parser.nextToken();
+                if (name.equals("Id")) {
+                    //名前
+                    if (parser.getText().equals("OK")) {
+                        return true;
+                    }
+                } else {
+                    //想定外のものは無視して次へ
+                    parser.skipChildren();
+                }
+            }
+        }
+
+        return false;
     }
 
 
