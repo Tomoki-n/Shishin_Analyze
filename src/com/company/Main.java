@@ -3,6 +3,7 @@ package com.company;
 import com.company.AI.*;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 
@@ -14,7 +15,7 @@ public class Main {
 
     private static int GAME_STATUS = 0;
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
 
         System.out.println("Starting Program");
 
