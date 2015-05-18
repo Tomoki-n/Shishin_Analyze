@@ -115,8 +115,7 @@ public class HttpConnection extends Thread {
 
     public synchronized boolean SendEndScore(String game_id ,int turn,int user0_score,int user1_score) throws IOException {
 
-        this.run(1);
-        if(!runs) {
+
             URL apiUrl = new URL("http://133.242.149.177/score/e_score/" + game_id + "/" + turn + "/" + user0_score + "/" + user1_score + "/");
 
             System.out.println(apiUrl);
@@ -151,30 +150,12 @@ public class HttpConnection extends Thread {
             }
 
             return false;
-        }
-        return false;
+
     }
 
 
     public void setId(String id) {
         this.Game_id = id;
-    }
-    public void run(int i){
-        try {
-        if(i==0){
-
-        }
-        else if(i==1){
-
-        }
-        else if(i==2){
-            
-        }
-        }
-        catch (Exception e){
-
-        }
-
     }
 
 }
