@@ -3,6 +3,8 @@ package com.company.AI;
 
 import com.company.AI.AI;
 
+import java.io.IOException;
+
 
 /**
  * Created by tomoki-n on 2015/04/10.
@@ -12,7 +14,7 @@ public class AI0 extends AI {
     /**
      * Creates new form GameField
      */
-    public AI0(String address, String type, String stype) throws InterruptedException {
+    public AI0(String address, String type, String stype) throws InterruptedException, IOException {
         super(address, type, stype);
     }
 

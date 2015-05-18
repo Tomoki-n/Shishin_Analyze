@@ -171,12 +171,15 @@ public abstract class AI {
      */
     public int victoryTeamID = -1;
 
+    public String analyze = "";
+
     /**
      * Creates new form GameField
      */
-    public AI(String address, String type, String stype) throws InterruptedException {
+    public AI(String address, String type, String stype) throws InterruptedException, IOException {
         this.serverIP = address;
         AI_type = Integer.parseInt(type);
+        analyze = stype;
         System.out.println("init");
         this.resetAll();
         this.sthread.sendName();
@@ -185,7 +188,7 @@ public abstract class AI {
     /**
      * 状態をすべてリセット
      */
-    public void resetAll() throws InterruptedException {
+    public void resetAll() throws InterruptedException, IOException {
         this.state = STATE_WAITINGPLAYER;
         //名前の入力
         this.myName = null;
@@ -363,6 +366,7 @@ public abstract class AI {
             return -1;
         }
         int otherid = (this.MyTeamID + 1) % 2;
+        //game_idを取得
         this.setTeamName(otherid, name);
         this.firstTeamID = 0;
         this.state = STATE_PLAY;
@@ -813,5 +817,12 @@ public abstract class AI {
         else if (j < i && j < k) return (tower_center);
         else if (k < i && k < j) return (tower_right);
         else return (tower_center);
+    }
+    public int GetTurnCount(){
+        return this.turnCount;
+    }
+    public int[] GetTeamPoint(){
+
+        return this.teamPoint;
     }
 }

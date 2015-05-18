@@ -35,13 +35,15 @@ public class Connection implements Runnable{
     private AI mainField;
     public boolean check =false;
 
+    private HttpConnection hp;
 
 
     private int PlayerID;
 
-    public Connection(String name,AI main){
+    public Connection(String name,AI main) throws IOException {
         this.mainField = main;
         this.myName = name;
+        this.hp = new HttpConnection();
         state = STATE_NOCONECTION;
     }
 
@@ -114,7 +116,7 @@ public class Connection implements Runnable{
     private int winner = -1;
 
     /** クライアントからのメッセ―ジ到着 */
-    public synchronized void getMessage(String message) throws InterruptedException {
+    public synchronized void getMessage(String message) throws InterruptedException, IOException {
         this.mainField.addMessage("Server:" + message);
 
         //終了処理
@@ -136,6 +138,7 @@ public class Connection implements Runnable{
             //GAMEENDメッセージは重要度が高い
             if(num == 502){
                 //502 GAMEEND [T]
+                if(this.mainField.analyze.equals("0"))hp.SendEndScore(hp.Game_id,this.mainField.GetTurnCount(),this.mainField.GetTeamPoint()[0],this.mainField.GetTeamPoint()[1]);
                 System.out.println("ゲーム終了");
                 Matcher gnd = GAMEENDMSGPTN.matcher(message);
                 if(gnd.matches()){
@@ -161,6 +164,7 @@ public class Connection implements Runnable{
                     if(nmc.matches()){
                         String advName = nmc.group(1);
                         this.mainField.adversHasCome(advName);
+                        if(this.mainField.analyze.equals("0"))hp.GetGameId(this.myName,advName);
                         this.state = STATE_GAME;
                     }
                     if(this.PlayerID == 1){
@@ -199,6 +203,7 @@ public class Connection implements Runnable{
                         //先攻でターンが終わった場合は次は待つことになる。
                         this.mainField.changeFirstTeam();
                         this.mainField.resetTurnState();
+                        if(this.mainField.analyze.equals("0"))hp.SendScore(hp.Game_id,this.mainField.GetTurnCount(),this.mainField.GetTeamPoint()[0],this.mainField.GetTeamPoint()[1]);
                         this.mainField.setPlayingTeamID((this.PlayerID+1)%2);
                         this.mainField.addMessage("相手の手を待っています。");
                         this.boardInfo = new ArrayList<String>();
@@ -208,6 +213,7 @@ public class Connection implements Runnable{
                         //後攻でターンが終わった場合はすぐに404が来るのでボードは読み直さない
                         this.mainField.changeFirstTeam();
                         this.mainField.resetTurnState();
+                        if(this.mainField.analyze.equals("0"))hp.SendScore(hp.Game_id,this.mainField.GetTurnCount(),this.mainField.GetTeamPoint()[0],this.mainField.GetTeamPoint()[1]);
                     }
                 } else if(num == 600){
                     //600 MSG
@@ -336,6 +342,8 @@ public class Connection implements Runnable{
             try {
                 this.mainField.resetAll();
             } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         } catch (InterruptedException e) {

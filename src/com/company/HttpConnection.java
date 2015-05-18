@@ -21,7 +21,7 @@ import java.util.Iterator;
 /**
  * Created by tomoki-n on 5/17/15.
  */
-public class HttpConnection {
+public class HttpConnection extends Thread {
 
    public String Game_id = "";
 
@@ -115,39 +115,43 @@ public class HttpConnection {
 
     public synchronized boolean SendEndScore(String game_id ,int turn,int user0_score,int user1_score) throws IOException {
 
-        URL apiUrl = new URL("http://133.242.149.177/score/e_score/" + game_id +"/"+ turn + "/" + user0_score + "/" + user1_score + "/" );
+        this.run(1);
+        if(!runs) {
+            URL apiUrl = new URL("http://133.242.149.177/score/e_score/" + game_id + "/" + turn + "/" + user0_score + "/" + user1_score + "/");
 
-        System.out.println(apiUrl);
-        //webから取得していく
-        String line, json = "";
-        BufferedReader reader = new BufferedReader(new InputStreamReader(apiUrl.openStream(), "UTF-8"));
-        while ((line = reader.readLine()) != null) {
-            json += line;
-        }
-        reader.close();
+            System.out.println(apiUrl);
+            //webから取得していく
+            String line, json = "";
+            BufferedReader reader = new BufferedReader(new InputStreamReader(apiUrl.openStream(), "UTF-8"));
+            while ((line = reader.readLine()) != null) {
+                json += line;
+            }
+            reader.close();
 
-        // JsonFactoryの生成
-        JsonFactory factory = new JsonFactory();
-        // JsonParserの取得
-        JsonParser parser = factory.createJsonParser(json);
+            // JsonFactoryの生成
+            JsonFactory factory = new JsonFactory();
+            // JsonParserの取得
+            JsonParser parser = factory.createJsonParser(json);
 
-        //JSONのパース処理
-        while (parser.nextToken() != JsonToken.END_OBJECT) {
-            String name = parser.getCurrentName();
-            if (name != null) {
-                parser.nextToken();
-                if (name.equals("Id")) {
-                    //名前
-                    if (parser.getText().equals("OK")) {
-                        return true;
+            //JSONのパース処理
+            while (parser.nextToken() != JsonToken.END_OBJECT) {
+                String name = parser.getCurrentName();
+                if (name != null) {
+                    parser.nextToken();
+                    if (name.equals("Id")) {
+                        //名前
+                        if (parser.getText().equals("OK")) {
+                            return true;
+                        }
+                    } else {
+                        //想定外のものは無視して次へ
+                        parser.skipChildren();
                     }
-                } else {
-                    //想定外のものは無視して次へ
-                    parser.skipChildren();
                 }
             }
-        }
 
+            return false;
+        }
         return false;
     }
 
@@ -155,7 +159,26 @@ public class HttpConnection {
     public void setId(String id) {
         this.Game_id = id;
     }
+    public void run(int i){
+        try {
+        if(i==0){
+
+        }
+        else if(i==1){
+
+        }
+        else if(i==2){
+            
+        }
+        }
+        catch (Exception e){
+
+        }
+
+    }
+
 }
+
 
 
 

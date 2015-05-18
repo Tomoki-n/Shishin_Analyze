@@ -18,13 +18,13 @@ public class Main {
     public static void main(String[] args) throws InterruptedException, IOException {
 
         System.out.println("Starting Program");
-       
+
         smain();
 
     }
     public static String init(){
 
-        String address =null;
+        String address ="";
 
         System.out.println("input IP Address: ");
         InputStreamReader isr = new InputStreamReader(System.in);
@@ -66,9 +66,26 @@ public class Main {
         String pattern = "^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$";
         return str.matches(pattern);
     }
+    public static String Connection(){
+        String type = null;
+        System.out.println("0:Using Analyze 1:Don't Using Analyze\n");
+        System.out.println("input NUMBER: ");
 
-    public static void smain() throws InterruptedException {
-        if(GAME_STATUS ==3){
+        InputStreamReader isr = new InputStreamReader(System.in);
+        BufferedReader br = new BufferedReader(isr);
+
+        try{
+            type1 = br.readLine();
+
+        }catch(Exception e){
+            AI_type();
+        }
+        return type1;
+
+    }
+
+    public static void smain() throws InterruptedException, IOException {
+        if(GAME_STATUS ==4){
             System.exit(0);
         }
 
@@ -88,7 +105,13 @@ public class Main {
                 break;
             }
             case 2:{
+                Connection();
+                GAME_STATUS = 3;
+                smain();
+            }
+            case 3:{
                 int ai2 = Integer.parseInt(ai1);
+
                 if (ai2 == 1) {
                     AI ai = new AI0(addr, ai1, type1);
 
@@ -110,7 +133,7 @@ public class Main {
                     CUI ai = new CUI(addr, ai1, type1);
                 }
 
-                GAME_STATUS = 3;
+                GAME_STATUS = 4;
                 break;
             }
             default:
