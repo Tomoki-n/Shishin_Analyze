@@ -165,6 +165,7 @@ public class Connection implements Runnable{
                         String advName = nmc.group(1);
                         this.mainField.adversHasCome(advName);
                         if(this.mainField.analyze.equals("0"))hp.GetGameId(this.myName,advName);
+                        if(this.mainField.analyze.equals("0"))hp.SendScore(hp.Game_id,1,this.mainField.GetTeamPoint()[0],this.mainField.GetTeamPoint()[1]);
                         this.state = STATE_GAME;
                     }
                     if(this.PlayerID == 1){
@@ -302,8 +303,6 @@ public class Connection implements Runnable{
                     //600 MSG
                     String chat = mc.group(2);
                     this.mainField.addMessage(chat);
-                } else {
-                    this.sendMessage("300 MESSAGE SYNTAX ERROR");
                 }
             }
         } // end of message matcing
