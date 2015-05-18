@@ -176,11 +176,13 @@ public abstract class AI {
     /**
      * Creates new form GameField
      */
-    public AI(String address, String type, String stype) throws InterruptedException, IOException {
+    protected AI(String address, String type, String stype, String name) throws InterruptedException, IOException {
         this.serverIP = address;
         AI_type = Integer.parseInt(type);
         analyze = stype;
         System.out.println("init");
+        //名前の入力
+        this.myName = name;
         this.resetAll();
         this.sthread.sendName();
     }
@@ -190,9 +192,6 @@ public abstract class AI {
      */
     public void resetAll() throws InterruptedException, IOException {
         this.state = STATE_WAITINGPLAYER;
-        //名前の入力
-        this.myName = null;
-        this.myName = "TajimaLab2";
         System.out.println("Playname:" + myName);
         if (this.myName == null) {
             System.exit(0);

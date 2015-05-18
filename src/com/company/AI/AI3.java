@@ -16,7 +16,7 @@ public class AI3 extends AI {
      * Creates new form GameField
      */
     public AI3(String address, String type, String stype) throws InterruptedException, IOException {
-        super(address, type, stype);
+        super(address, type, stype, "Foolhardiness v1.00");
     }
 
     /**

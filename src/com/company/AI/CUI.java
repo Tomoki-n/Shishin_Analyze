@@ -16,7 +16,14 @@ public class CUI extends AI {
      * Creates new form GameField
      */
     public CUI(String address, String type, String stype) throws InterruptedException, IOException {
-        super(address, type, stype);
+        super(address, type, stype, "CUI-Mode Player");
+    }
+
+    /**
+     * Creates new form GameField
+     */
+    public CUI(String address, String type, String stype, String name) throws InterruptedException, IOException {
+        super(address, type, stype, name);
     }
 
     /**

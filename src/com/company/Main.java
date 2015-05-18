@@ -132,7 +132,11 @@ public class Main {
 
                 }
                 else if(ai2 == 5) {
-                    CUI ai = new CUI(addr, ai1, type1);
+                    String name;
+                    System.out.println("input your name:");
+                    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                    name = br.readLine();
+                    CUI ai = new CUI(addr, ai1, type1, name);
                 }
 
                 GAME_STATUS = 4;
