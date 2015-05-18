@@ -148,7 +148,7 @@ public class AI1 extends AI {
     @Override
     public void addMessage(String msg) throws InterruptedException{
 
-        if (msg == "Select Unit") {
+        if (msg == "Select Unit"&&this.sthread.state !=20) {
            if(MyTeamID == 0) { //int unit[][] = new int[2][3];
                if (test == 1) {
                    units = new int[2][3];

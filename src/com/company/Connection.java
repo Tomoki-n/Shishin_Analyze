@@ -138,7 +138,6 @@ public class Connection implements Runnable{
             //GAMEENDメッセージは重要度が高い
             if(num == 502){
                 //502 GAMEEND [T]
-                if(this.mainField.analyze.equals("0"))hp.SendEndScore(hp.Game_id,this.mainField.GetTurnCount(),this.mainField.GetTeamPoint()[0],this.mainField.GetTeamPoint()[1]);
                 System.out.println("ゲーム終了");
                 Matcher gnd = GAMEENDMSGPTN.matcher(message);
                 if(gnd.matches()){
@@ -147,6 +146,7 @@ public class Connection implements Runnable{
                     this.boardInfo = new ArrayList<String>();
                     sendMessage("400 GETBORD");
                 }
+
             }
 
             if(this.state == STATE_INIT){
@@ -271,6 +271,12 @@ public class Connection implements Runnable{
                     } else if(this.state == STATE_VIEW_GETBOARD){
                         this.state = STATE_GAME;
                     } else {
+
+                        //試合終了時のスコアをDBに送信
+                        if(this.mainField.analyze.equals("0")) {
+                            hp.SendEndScore(hp.Game_id,this.mainField.GetTurnCount(),this.mainField.GetTeamPoint()[0],this.mainField.GetTeamPoint()[1]);
+                        }
+
                         if(winner == -1){
                             System.out.println("ゲーム終了");
                             this.mainField.addMessage("引き分けでした。");
@@ -284,6 +290,7 @@ public class Connection implements Runnable{
                         this.state = STATE_FINISH;
                         System.out.println("ゲーム終了");
                         this.mainField.addMessage("メニューからリセットしてください。");
+
                     }
                 } else if(num == 600){
                     //600 MSG

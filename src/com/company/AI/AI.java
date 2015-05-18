@@ -192,7 +192,7 @@ public abstract class AI {
         this.state = STATE_WAITINGPLAYER;
         //名前の入力
         this.myName = null;
-        this.myName = "TajimaLab";
+        this.myName = "TajimaLab2";
         System.out.println("Playname:" + myName);
         if (this.myName == null) {
             System.exit(0);

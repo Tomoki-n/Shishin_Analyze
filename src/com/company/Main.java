@@ -78,13 +78,14 @@ public class Main {
             type1 = br.readLine();
 
         }catch(Exception e){
-            AI_type();
+          Connection();
         }
         return type1;
 
     }
 
     public static void smain() throws InterruptedException, IOException {
+
         if(GAME_STATUS ==4){
             System.exit(0);
         }
@@ -108,6 +109,8 @@ public class Main {
                 Connection();
                 GAME_STATUS = 3;
                 smain();
+                break;
+
             }
             case 3:{
                 int ai2 = Integer.parseInt(ai1);
@@ -118,7 +121,6 @@ public class Main {
                 }
                 else if (ai2 == 2) {
                     AI1 ai = new AI1(addr, ai1, type1);
-
 
                 }
                 else if (ai2 == 3) {
