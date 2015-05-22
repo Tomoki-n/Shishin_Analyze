@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Shishin_Player.iml" filepath="$PROJECT_DIR$/Shishin_Player.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Shishin_Viewer.iml" filepath="$PROJECT_DIR$/Shishin_Viewer.iml" />
     </modules>
   </component>
 </project>
