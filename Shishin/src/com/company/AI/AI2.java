@@ -15,7 +15,7 @@ public class AI2 extends AI {
      * Creates new form GameField
      */
     public AI2(String address, String type, String stype) throws InterruptedException, IOException {
-        super(address, type, stype, "kari-02 v0.0");
+        super(address, type, stype, "kari-02");
     }
 
     /**

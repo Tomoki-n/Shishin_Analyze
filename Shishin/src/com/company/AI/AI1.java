@@ -136,7 +136,7 @@ public class AI1 extends AI {
      * Creates new form GameField
      */
     public AI1(String address, String type, String stype) throws InterruptedException, IOException {
-        super(address, type, stype, "Glyph-Hack v1.0");
+        super(address, type, stype, "Glyph-Hack");
     }
 
     int test = 1;
