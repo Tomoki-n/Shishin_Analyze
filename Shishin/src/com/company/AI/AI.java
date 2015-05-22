@@ -5,8 +5,15 @@ import com.company.Connection;
 
 import java.awt.*;
 import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.lang.Override;
+import java.lang.StringBuilder;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -171,7 +178,17 @@ public abstract class AI {
      */
     public int victoryTeamID = -1;
 
+    /**
+     * ゲームログデータ収集の有無
+     */
     public String analyze = "";
+
+    /**
+     * 棋譜ファイル出力用
+     */
+    private File gameRecordFile;
+    private PrintWriter gameRecorder;
+
 
     /**
      * Creates new form GameField
@@ -183,6 +200,18 @@ public abstract class AI {
         System.out.println("init");
         //名前の入力
         this.myName = name;
+
+        //ファイル入出力準備
+        /* ひとまずWIP
+        if(analyze.equals("0")) {
+            SimpleDateFormat filenameFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+            this.gameRecordFile = new File(filenameFormat.format(Calendar.getInstance().getTime()) + ".txt");
+            //exists確認入れたほうがいいのか？
+            this.gameRecordFile.createNewFile();
+            this.gameRecorder = new PrintWriter(new BufferedWriter(new FileWriter(this.gameRecordFile)));
+        }
+        */
+
         this.resetAll();
         this.sthread.sendName();
     }
@@ -269,7 +298,7 @@ public abstract class AI {
     }
 
     /**
-     * 先行かどうかを返す
+     * 先攻かどうかを返す
      */
     public boolean isFirstPlayer(int myID) {
         if (this.firstTeamID == myID) {
@@ -436,6 +465,8 @@ public abstract class AI {
 
         //盤面タイプ判定
         this.analyzeBoardType();
+
+        //TODO:棋譜出力
     }
 
     /**
