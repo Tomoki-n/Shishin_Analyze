@@ -132,13 +132,14 @@ public abstract class AI {
     protected int[] teamPoint;
     /**
      * 自分のチーム番号
+     * 1ターン目に先手ならば0、後手ならば1
      */
     protected int MyTeamID;
 
     /**
      * 前のユニットの位置
      */
-    protected Point[][] prevUnitLocation;
+    private Point[][] prevUnitLocation;
     public int[] prevMove;
 
 

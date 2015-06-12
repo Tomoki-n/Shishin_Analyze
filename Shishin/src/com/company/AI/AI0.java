@@ -24,9 +24,36 @@ public class AI0 extends AI {
     @Override
     public void addMessage(String msg) throws InterruptedException {
         if (msg == "Select Unit") {
-            //TODO: ここに自分のAI部分を書く
-            //this.sthread.sendPlayMessage(unitID, X, Y); で指します
+            int[] move = this.move_diceistab();
+            this.sthread.sendPlayMessage(move[0], move[1], move[2]);
         }
         System.out.println(msg);
+    }
+
+    private synchronized int[] move_diceistab() {
+        int[] move = new int[3];
+
+        //初手先攻の場合の最初に指す手
+        if(this.turnCount == 1 && this.turnState == STATE_PLAY_TURN1) {
+            //動かす駒はランダム
+            move[0] = (int)(Math.random() * 4.0);
+            //右前か左前のどちらかにランダムに指す
+            move[2] = 6;
+            if((int)(Math.random() * 2.0) == 0) {
+                move[1] = 3;
+            } else {
+                move[1] = 5;
+            }
+            return move;
+        }
+
+        if(this.MyTeamID == 0) {
+            for(int i = 0; i < 4; i++) {
+
+            }
+        } else {
+
+        }
+        return move;
     }
 }
