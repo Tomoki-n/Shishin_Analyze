@@ -47,7 +47,7 @@ public class Main {
 
     public static String AI_type(){
         String type = null;
-        System.out.println("AI:1.Higuchi 2.Nishinaka 3.Ishitani 4.Demo 5.CUI-Mode\n");
+        System.out.println("AI:1.Higuchi 2.Nishinaka 3.Ishitani 4.Demo 5:DemoVer2 99.CUI-Mode\n");
         System.out.println("input AI_NUMBER: ");
         InputStreamReader isr = new InputStreamReader(System.in);
         BufferedReader br = new BufferedReader(isr);
@@ -131,7 +131,10 @@ public class Main {
                     AI3 ai = new AI3(addr, ai1, type1);
 
                 }
-                else if(ai2 == 5) {
+                else if (ai2 == 5) {
+                    AI4 ai = new AI4(addr, ai1, type1);
+                }
+                else if(ai2 == 99) {
                     String name;
                     System.out.println("input your name:");
                     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));

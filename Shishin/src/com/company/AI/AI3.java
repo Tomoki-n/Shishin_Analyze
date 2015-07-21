@@ -86,6 +86,12 @@ public class AI3 extends AI {
         }
 
         for(int i = 0; i < 4; i++) {
+            arrived_p[i] = 0;
+        }
+        for(int i = 0; i < 3; i++) {
+            arrived_t[i] = 0;
+        }
+        for(int i = 0; i < 4; i++) {
             for(int j = 0; j < 3; j++) {
                 if(this.unitLocation[this.MyTeamID][i].equals(pos[j][0])) {
                     arrived_t[j] = i;
@@ -100,8 +106,6 @@ public class AI3 extends AI {
                     unit[1] = pos[j][1].x;
                     unit[2] = pos[j][1].y;
                     return unit;
-                } else {
-                    arrived_p[i] = 0;
                 }
             }
         }
