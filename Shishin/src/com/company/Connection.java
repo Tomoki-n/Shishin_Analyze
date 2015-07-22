@@ -292,6 +292,12 @@ public class Connection implements Runnable{
                         System.out.println("ゲーム終了");
                         this.mainField.addMessage("メニューからリセットしてください。");
 
+                        //TODO:↓の処理をAI.addMessageの中に入れる
+                        if(this.mainField.analyze.equals("0") || this.mainField.analyze.equals("2")) {
+                            //終局処理
+                            this.mainField.gameRecorder.printf("finish %d %d\r\n", this.mainField.GetTeamPoint()[0], this.mainField.GetTeamPoint()[1]);
+                            this.mainField.gameRecorder.close();
+                        }
                     }
                 } else if(num == 600){
                     //600 MSG

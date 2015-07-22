@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.lang.Override;
 import java.lang.StringBuilder;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.regex.Matcher;
@@ -113,6 +114,10 @@ public abstract class AI {
      */
     protected String myName;
     /**
+     * 相手の名前
+     */
+    protected String enemyName;
+    /**
      * サーバのアドレス
      */
     protected String serverIP;
@@ -187,7 +192,8 @@ public abstract class AI {
      * 棋譜ファイル出力用
      */
     private File gameRecordFile;
-    private PrintWriter gameRecorder;
+    //TODO:あとでprivateに戻す
+    public PrintWriter gameRecorder;
 
 
     /**
@@ -202,15 +208,13 @@ public abstract class AI {
         this.myName = name;
 
         //ファイル入出力準備
-        /* ひとまずWIP
-        if(analyze.equals("0")) {
+        if(analyze.equals("0") || analyze.equals("2")) {
             SimpleDateFormat filenameFormat = new SimpleDateFormat("yyyyMMddHHmmss");
             this.gameRecordFile = new File(filenameFormat.format(Calendar.getInstance().getTime()) + ".txt");
             //exists確認入れたほうがいいのか？
             this.gameRecordFile.createNewFile();
             this.gameRecorder = new PrintWriter(new BufferedWriter(new FileWriter(this.gameRecordFile)));
         }
-        */
 
         this.resetAll();
         this.sthread.sendName();
@@ -271,7 +275,6 @@ public abstract class AI {
          this.teamPoint[0] = 0;
          this.teamPoint[1] = 0;
 
-
          this.resetTurnState();
     }
 
@@ -331,9 +334,10 @@ public abstract class AI {
      * チーム名の変更
      */
     public void setTeamName(int teamNumber, String teamName) {
-        if (teamNumber == 0) {
-        } else if (teamNumber == 1) {
+        if (teamNumber == EnemyTeamID()) {
+            this.enemyName = teamName;
         }
+        //自分のチーム名を設定する必要があるかどうか
     }
 
     /**
@@ -398,6 +402,23 @@ public abstract class AI {
         this.setTeamName(otherid, name);
         this.firstTeamID = 0;
         this.state = STATE_PLAY;
+
+        //棋譜出力有の場合の処理
+        if(analyze.equals("0") || analyze.equals("2")) {
+            //棋譜記述方式バージョン
+            this.gameRecorder.println("ShishinRecord_ver.150723");
+            //両チームの名前
+            if(this.MyTeamID == 0) {
+                this.gameRecorder.println(this.myName);
+                this.gameRecorder.println(this.enemyName);
+            } else {
+                this.gameRecorder.println(this.enemyName);
+                this.gameRecorder.println(this.myName);
+            }
+            //初期状態の記録
+            this.writeBoardstate();
+        }
+
         return 0;
     }
 
@@ -466,7 +487,30 @@ public abstract class AI {
         //盤面タイプ判定
         this.analyzeBoardType();
 
-        //TODO:棋譜出力
+        //棋譜出力
+        if(analyze.equals("0") || analyze.equals("2")) {
+            this.writeBoardstate();
+        }
+    }
+
+    /**
+     * 現状のボード状態をファイルに記録
+     */
+    private synchronized void writeBoardstate() {
+        if(!(analyze.equals("0") || analyze.equals("2"))) {
+            //analyzeモードに入ってない時に記録を行わない
+            return;
+        }
+        this.gameRecorder.printf("%d %d ", this.turnCount, this.turnState);
+        for(int team = 0; team < 2; team++) {
+            for(int unitnum = 0; unitnum < 4; unitnum++) {
+                this.gameRecorder.printf("%d %d ", this.unitLocation[team][unitnum].x, this.unitLocation[team][unitnum].y);
+            }
+        }
+        for(int i = 0; i < 3; i++) {
+            this.gameRecorder.printf("%d ", this.towerHold[i]);
+        }
+        this.gameRecorder.printf("%d %d\r\n", this.teamPoint[0], this.teamPoint[1]);
     }
 
     /**
