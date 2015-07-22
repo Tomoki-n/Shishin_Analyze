@@ -36,7 +36,7 @@ public class AI3 extends AI {
      * 実質的なAI部分
      * @return 駒の動きを示す配列。[0]が駒のID、[1]が移動先のX座標、[2]が移動先のY座標を示す
      */
-    private int[] move_demo01() {
+    private synchronized int[] move_demo01() {
         // codename: Foolhardiness (蛮勇)
 
         //送信するコード
@@ -86,10 +86,10 @@ public class AI3 extends AI {
         }
 
         for(int i = 0; i < 4; i++) {
-            arrived_p[i] = 0;
+            arrived_p[i] = -1;
         }
         for(int i = 0; i < 3; i++) {
-            arrived_t[i] = 0;
+            arrived_t[i] = -1;
         }
         for(int i = 0; i < 4; i++) {
             for(int j = 0; j < 3; j++) {
@@ -111,17 +111,17 @@ public class AI3 extends AI {
         }
 
         //1・2位置に駒がいない場合
-        if(arrived_t[0] == 0 || arrived_t[1] == 0 || arrived_t[2] == 0) {
+        if(arrived_t[0] == -1 || arrived_t[1] == -1 || arrived_t[2] == -1) {
             //まだ陣取りされていない柱がある場合突進
             while(true) {
                 //どの駒を進めるかはランダム(柱に着いていない駒限定で)
                 int i = (int)(Math.random() * 4.0);
-                if(arrived_p[i] == 0) {
+                if(arrived_p[i] == -1) {
                     unit[0] = i;
                     while(true) {
                         //どの柱に動かすかもランダム
                         int j = (int)(Math.random() * 3.0);
-                        if(arrived_t[j] == 0) {
+                        if(arrived_t[j] == -1) {
                             unit[1] = pos[j][2].x;
                             unit[2] = pos[j][2].y;
                             return unit;
@@ -134,13 +134,31 @@ public class AI3 extends AI {
 
         //全ての柱に神がいる場合
         for(int i = 0; i < 4; i++) {
-            if(arrived_p[i] == 0) {
+            if(arrived_p[i] == -1) {
                 unit[0] = i;
                 int j = (int)(Math.random() * 3.0);
                 unit[1] = pos[j][2].x;
                 unit[2] = pos[j][2].y;
+                return unit;
             }
         }
-        return unit;
+
+        //全ての駒がいずれかの柱にいる場合
+        int arrived_cnt[] = new int[3]; //柱にいる駒の数
+        for(int i = 0; i < 3; i++) {
+            arrived_cnt[i] = 0;
+        }
+        for(int i = 0; i < 4; i++) {
+            arrived_cnt[arrived_p[i]]++;
+        }
+        while (true) {
+            int i = (int)(Math.random() * 4.0);
+            if(arrived_cnt[arrived_p[i]] >= 2) {
+                unit[0] = i;
+                unit[1] = pos[arrived_p[i]][1].x;
+                unit[2] = pos[arrived_p[i]][1].y;
+                return unit;
+            }
+        }
     }
 }

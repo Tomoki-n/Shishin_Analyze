@@ -36,7 +36,7 @@ public class AI4 extends AI {
      * 実質的なAI部分
      * @return 駒の動きを示す配列。[0]が駒のID、[1]が移動先のX座標、[2]が移動先のY座標を示す
      */
-    private int[] move_demo02() {
+    private synchronized int[] move_demo02() {
         // codename: FoolhardinessII (蛮勇II)
 
         //送信するコード
@@ -141,15 +141,17 @@ public class AI4 extends AI {
 
         //盤面の現状を取得
         for(int i = 0; i < 4; i++) {
-            arrived_p[i] = 0;
-            arrived_t[i] = 0;
+            arrived_p[i] = -1;
+            arrived_t[i] = -1;
         }
         for(int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 if (this.unitLocation[this.MyTeamID][i].equals(pos[j][0])) {
                     //既に駒が柱に到着している場合
-                    arrived_t[j] = i;
-                    arrived_p[i] = j;
+                    if(j != 3) {
+                        arrived_t[j] = i;
+                        arrived_p[i] = j;
+                    }
                 } else if (this.unitLocation[this.MyTeamID][i].equals(pos[j][1])) {
                     //柱に向かって移動する駒がすでにある場合(柱までの距離1)、指し手決定
                     unit[0] = i;
@@ -165,7 +167,7 @@ public class AI4 extends AI {
                 }
             }
 
-            if(arrived_p[i] == 0) {
+            if(arrived_p[i] == -1) {
                 if((pos[3][0] == tower_left && this.unitLocation[this.MyTeamID][i].equals(new Point(0,4))) || (pos[3][0] == tower_right && this.unitLocation[this.MyTeamID][i].equals(new Point(8,4)))) {
                     unit[0] = i;
                     unit[1] = pos[3][0].x;
@@ -176,19 +178,19 @@ public class AI4 extends AI {
         }
 
         //1・2位置に駒がいない場合
-        if(arrived_t[0] == 0 || arrived_t[1] == 0 || arrived_t[2] == 0) {
+        if(arrived_t[0] == -1 || arrived_t[1] == -1 || arrived_t[2] == -1) {
             //まだ陣取りされていない柱がある場合突進
             while(true) {
                 //どの駒を進めるかはランダム(柱に着いていない駒限定で)
                 int i = (int)(Math.random() * 4.0);
-                if(arrived_p[i] == 0) {
+                if(arrived_p[i] == -1) {
                     unit[0] = i;
                     while(true) {
                         //どの柱に動かすかもランダム
                         if(boardType == BOARD_TYPE_UNDEFINED) {
                             //バック後の行き先がわからない場合
                             int j = (int) (Math.random() * 4.0);
-                            if(arrived_t[j] == 0) {
+                            if(arrived_t[j] == -1) {
                                 unit[1] = pos[j][2].x;
                                 unit[2] = pos[j][2].y;
                                 return unit;
@@ -196,7 +198,7 @@ public class AI4 extends AI {
                         } else {
                             //バック後の行き先がわかる場合
                             int j = (int) (Math.random() * 3.0);
-                            if (arrived_t[j] == 0) {
+                            if (arrived_t[j] == -1) {
                                 if(pos[j][0].equals(pos[3][0]) && Math.random() > 0.5) {
                                     j = 3;
                                 }
@@ -211,15 +213,33 @@ public class AI4 extends AI {
         }
 
 
-        //全ての柱に駒がいる場合
+        //全ての柱に駒がおり、残り一つが基地にいる場合
         for(int i = 0; i < 4; i++) {
-            if(arrived_p[i] == 0) {
+            if(arrived_p[i] == -1) {
                 unit[0] = i;
                 int j = (int)(Math.random() * 4.0);
                 unit[1] = pos[j][2].x;
                 unit[2] = pos[j][2].y;
+                return unit;
             }
         }
-        return unit;
+
+        //全ての駒がいずれかの柱にいる場合
+        int arrived_cnt[] = new int[4]; //柱にいる駒の数
+        for(int i = 0; i < 4; i++) {
+            arrived_cnt[i] = 0;
+        }
+        for(int i = 0; i < 4; i++) {
+            arrived_cnt[arrived_p[i]]++;
+        }
+        while (true) {
+            int i = (int)(Math.random() * 4.0);
+            if(arrived_cnt[arrived_p[i]] >= 2) {
+                unit[0] = i;
+                unit[1] = pos[arrived_p[i]][1].x;
+                unit[2] = pos[arrived_p[i]][1].y;
+                return unit;
+            }
+        }
     }
 }
