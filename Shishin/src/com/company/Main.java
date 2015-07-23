@@ -67,9 +67,8 @@ public class Main {
         return str.matches(pattern);
     }
     public static String Connection(){
-        /*
         String type = null;
-        System.out.println("0:Using Analyze 1:Don't Using Analyze\n");
+        System.out.println("1:Don't Using Record 2:Record\n");
         System.out.println("input NUMBER: ");
 
         InputStreamReader isr = new InputStreamReader(System.in);
@@ -81,9 +80,6 @@ public class Main {
         }catch(Exception e){
           Connection();
         }
-        */
-
-        type1 = "1";    //analyze処理を行わないようにするための処理、後で改めて全部削除する
         return type1;
 
     }
