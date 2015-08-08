@@ -150,6 +150,11 @@ public class AI1 extends AI {
 
         if (msg == "Select Unit" && this.sthread.state !=20) {
            if(MyTeamID == 0) { //int unit[][] = new int[2][3];
+
+/*ここ*/
+
+
+
                if (test == 1) {
                    units = new int[2][3];
                    init();
