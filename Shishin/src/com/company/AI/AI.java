@@ -665,14 +665,14 @@ public abstract class AI {
             else if ((E_char1 == BLACK && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == BLACK)){
                 return 2;
             }
-            else if ((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
+            else if ((E_char1 == RED && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == RED)){
                 return 2;
             }
         }
 
         if((A_char1 == BLACK && A_char2 == RED)||(A_char1 == RED && A_char2 == BLACK)){
             if((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
-                return 1;
+                return 0;
             }
             else if ((E_char1 == RED && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == RED)){
                 return 2;
@@ -686,7 +686,7 @@ public abstract class AI {
             else if ((E_char1 == BLACK && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == BLACK)){
                 return 2;
             }
-            else if ((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
+            else if ((E_char1 == RED && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == RED)){
                 return 1;
             }
         }
@@ -706,7 +706,7 @@ public abstract class AI {
             else if ((E_char1 == BLACK && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == BLACK)){
                 return 2;
             }
-            else if ((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
+            else if ((E_char1 == RED && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == RED)){
                 return 2;
             }
         }
@@ -726,13 +726,13 @@ public abstract class AI {
             else if ((E_char1 == BLACK && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == BLACK)){
                 return 2;
             }
-            else if ((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
+            else if ((E_char1 == RED && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == RED)){
                 return 2;
             }
         }
         if((A_char1 == GREEN && A_char2 == YELLOW)||(A_char1 == YELLOW && A_char2 == GREEN)){
             if((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
-                return 0;
+                return 1;
             }
             else if ((E_char1 == RED && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == RED)){
                 return 2;
@@ -746,7 +746,7 @@ public abstract class AI {
             else if ((E_char1 == BLACK && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == BLACK)){
                 return 2;
             }
-            else if ((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
+            else if ((E_char1 == RED && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == RED)){
                 return 0;
             }
         }
@@ -758,15 +758,15 @@ public abstract class AI {
                 return 2;
             }
             else if ((E_char1 == GREEN && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == GREEN)){
-                return 0;
+                return 1;
             }
             else if ((E_char1 == BLACK && E_char2 == RED)||(E_char1 == RED && E_char2 == BLACK)){
-                return 1;
+                return 0;
             }
             else if ((E_char1 == BLACK && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == BLACK)){
                 return 2;
             }
-            else if ((E_char1 == BLACK && E_char2 == GREEN)||(E_char1 == GREEN && E_char2 == BLACK)){
+            else if ((E_char1 == RED && E_char2 == YELLOW)||(E_char1 == YELLOW && E_char2 == RED)){
                 return 2;
             }
         }
