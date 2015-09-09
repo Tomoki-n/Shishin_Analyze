@@ -131,17 +131,23 @@ public class AI1 extends AI {
     public int base_unitpair;
     public int tower_unitpair;
     public int routeinfo = -1;
-
+    int test = 1;
+    int units[][] = new int[2][3];
+    Random rnd = new Random();
+    int uni = rnd.nextInt(2);
+    int y;
     /**
      * Creates new form GameField
      */
     public AI1(String address, String type, String stype) throws InterruptedException, IOException {
         super(address, type, stype, "Glyph-Hack");
+        y=uni;
     }
 
-    int test = 1;
-    int units[][] = new int[2][3];
 
+
+
+    int chk =0;
     /**
      * ユーザへのメッセージ表示
      */
@@ -150,21 +156,45 @@ public class AI1 extends AI {
 
         if (msg == "Select Unit" && this.sthread.state !=20) {
            if(MyTeamID == 0) { //int unit[][] = new int[2][3];
-               if (test == 1) {
+
+
+/*ここ*/       if (chk==0&&test == 1) {
+               units = new int[2][3];
+               init();
+               synchronized (units) {
+                   units = backattack();
+                   Thread.sleep(500);
+               }
+                   this.sthread.sendPlayMessage(units[0][0], units[0][1], units[0][2]);
+                   test = 2;
+               } else if (chk==0&&test == 2) {
+                   Thread.sleep(500);
+                   this.sthread.sendPlayMessage(units[1][0], units[1][1], units[1][2]);
+                   if(this.turnCount == 3) chk = 1;
+                   test = 1;
+               }
+
+
+/*ここ*/       if (chk==1&&test == 1) {
                    units = new int[2][3];
                    init();
                    synchronized (units) {
                        units = UnitOrder0();
                        Thread.sleep(500);
                    }
-                   
                    this.sthread.sendPlayMessage(units[0][0], units[0][1], units[0][2]);
                    test = 2;
-               } else if (test == 2) {
+               } else if (chk==1&&test == 2) {
                    this.sthread.sendPlayMessage(units[1][0], units[1][1], units[1][2]);
                    test = 1;
                }
-           }else if(MyTeamID == 1){
+
+
+
+
+           }
+
+           else if(MyTeamID == 1){
                if (test == 1) {
                    units = new int[2][3];
                    init();
@@ -184,7 +214,76 @@ public class AI1 extends AI {
         System.out.println(msg);
     }
 
+    @Override
+    public int EnemyTeamID() {
+        return super.EnemyTeamID();
+    }
 
+    int moves[] = new int [2];
+    public static final Point RouteLEFT = new Point(0, 4);
+    public static final Point RouteRIGHT = new Point(8, 4);
+
+    public synchronized int[][] backattack() {
+/*0-2 1-3*/
+/** 0:コマの種類　1:X座標　2:Y座標 3:ルート**/
+        int unit[][] = new int[2][4];
+
+
+        switch (this.turnCount) {
+            case 1: {
+                unit[0][0] = setupUnit(y)[0];
+                unit[0][1] = 4;
+                unit[0][2] = 8;
+                unit[1][0] = setupUnit(y)[1];
+                unit[1][1] = 4;
+                unit[1][2] = 8;
+
+                moves[0]=unit[0][0];
+                moves[1]=unit[1][0];
+                return unit;
+
+            }
+
+            case 2: {
+                unit[0][0] = moves[0];
+                unit[0][1] = 4;
+                unit[0][2] = 9;
+                unit[1][0] = moves[1];
+                unit[1][1] = 4;
+                unit[1][2] = 9;
+
+
+                return unit;
+            }
+            case 3: {
+                if(this.unitLocation[0][moves[0]].equals(RouteLEFT)){
+                    unit[0][0] = moves[0];
+                    unit[0][1] = 1;
+                    unit[0][2] = 4;
+                    unit[1][0] = moves[1];
+                    unit[1][1] = 1;
+                    unit[1][2] = 4;
+
+                    return unit;
+                }
+
+                else if(this.unitLocation[0][moves[0]].equals(RouteRIGHT)) {
+                    unit[0][0] = moves[0];
+                    unit[0][1] = 7;
+                    unit[0][2] = 4;
+                    unit[1][0] = moves[1];
+                    unit[1][1] = 7;
+                    unit[1][2] = 4;
+
+                    return unit;
+                }
+
+
+            }
+
+        }
+        return unit;
+    }
 
 
     public synchronized int[][]  UnitOrder0() {
