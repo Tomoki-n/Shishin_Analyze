@@ -825,4 +825,199 @@ public abstract class AI {
 
         return this.teamPoint;
     }
+
+
+
+    /**
+     * 相手の駒に勝てる駒を返す(1対1)
+     * @param enemy 相手の駒
+     * @return 相手の駒に勝つことができる駒
+     */
+    public static int winUnit1(int enemy) {
+        switch(enemy) {
+            case GREEN:
+                return YELLOW;
+            case BLACK:
+                return GREEN;
+            case RED:
+                return BLACK;
+            case YELLOW:
+                return RED;
+            default:
+                return -1;
+        }
+    }
+
+    /**
+     * 相手の駒に負ける駒を返す(1対1)
+     * @param enemy 相手の駒
+     * @return 相手の駒に負けることができる駒
+     */
+    public static int loseUnit1(int enemy) {
+        switch (enemy) {
+            case GREEN:
+                return BLACK;
+            case BLACK:
+                return RED;
+            case RED:
+                return YELLOW;
+            case YELLOW:
+                return GREEN;
+            default:
+                return -1;
+        }
+    }
+
+    /**
+     * 相手の駒に勝てる駒の組み合わせを返す(2対2)
+     * @param enemy1 相手の駒1つ目
+     * @param enemy2 相手の駒2つ目
+     * @return 相手の駒に勝つことができる駒の組み合わせ(無い場合はnullを返す)
+     */
+    public static int[] winUnit2(int enemy1, int enemy2) {
+        int[] unit = new int[2];
+
+        //条件分岐させやすいよう、予めenemy1 < enemy2になるようにする(enemy1 == enemy2はありえない)
+        if(enemy1 > enemy2) {
+            int swap_tmp = enemy1;
+            enemy1 = enemy2;
+            enemy2 = swap_tmp;
+        }
+
+        if(enemy1 == GREEN && enemy2 == BLACK) {
+            unit[0] = GREEN;
+            unit[1] = YELLOW;
+        } else if (enemy1 == GREEN && enemy2 == YELLOW) {
+            unit[0] = RED;
+            unit[1] = YELLOW;
+        } else if (enemy1 == BLACK && enemy2 == RED) {
+            unit[0] = GREEN;
+            unit[1] = BLACK;
+        } else if (enemy1 == RED && enemy2 == YELLOW) {
+            unit[0] = BLACK;
+            unit[1] = RED;
+        } else {
+            return null;
+        }
+        return unit;
+    }
+
+    /**
+     * 2対2で、相手の駒に勝てる駒の組み合わせが存在するかを返す。<br>
+     * 組み合わせが存在しない場合は、自陣側がどの組み合わせであっても戦えば必ず引き分けになる。
+     * @param enemy1 相手の駒1つ目
+     * @param enemy2 相手の駒2つ目
+     * @return 相手の駒に勝つことができる駒の組み合わせが存在すればtrue, 存在しなければfalse
+     */
+    public static boolean winUnit2exist(int enemy1, int enemy2) {
+        if(winUnit2(enemy1, enemy2) == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * 指定した位置に存在するユニットの数を返す
+     * @param x 調べたい位置のX座標
+     * @param y 調べたい位置のY座標
+     * @param teamID 0ならば1ターン目先攻チーム、1ならば1ターン目後攻チーム、それ以外なら両チーム合計
+     * @return 位置(x,y)に存在する、teamIDで指定したチームのユニット個数
+     */
+    public synchronized int existUnit(int x, int y, int teamID) {
+        return existUnit(new Point(x, y), teamID);
+    }
+
+    /**
+     * 指定した位置に存在するユニットの数を返す
+     * @param pos 調べたい位置
+     * @param teamID 0ならば1ターン目先攻チーム、1ならば1ターン目後攻チーム、それ以外なら両チーム合計
+     * @return 位置(x,y)に存在する、teamIDで指定したチームのユニット個数
+     */
+    public synchronized int existUnit(Point pos, int teamID) {
+        int count = 0;
+
+        if(teamID != 0 && teamID != 1) {
+            for(int team = 0; team < 2; team++) {
+                for(int unit = 0; unit < 4; unit++) {
+                    if(this.unitLocation[team][unit].equals(pos)) {
+                        count++;
+                    }
+                }
+            }
+        } else {
+            for(int unit = 0; unit < 4; unit++) {
+                if(this.unitLocation[teamID][unit].equals(pos)) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    /**
+     * 指定した位置に存在するユニットのリストを返す
+     * @param x 調べたい場所のX座標
+     * @param y 調べたい場所のY座標
+     * @param teamID 0ならば1ターン目先攻チーム、1ならば1ターン目後攻チーム、それ以外はエラー
+     * @return 位置(x,y)に存在する、teamIDで指定したチームのユニット個数
+     */
+    public synchronized ArrayList<Integer> existUnits(int x, int y, int teamID) {
+        return existUnits(new Point(x, y), teamID);
+    }
+
+    /**
+     * 指定した位置に存在するユニットのリストを返す
+     * @param pos 調べたい位置
+     * @param teamID 0ならば1ターン目先攻チーム、1ならば1ターン目後攻チーム、それ以外はエラー
+     * @return 位置(x,y)に存在する、teamIDで指定したチームのユニット個数
+     */
+    public synchronized ArrayList<Integer> existUnits(Point pos, int teamID) {
+        ArrayList<Integer> list = new ArrayList<Integer>();
+
+        if(teamID != 0 && teamID != 1) {
+            throw new IllegalArgumentException("existUnits()にて、無効なteamIDが指定されました");
+        }
+        for(int unit = 0; unit < 4; unit++) {
+            if(this.unitLocation[teamID][unit].equals(pos)) {
+                list.add(unit);
+            }
+        }
+
+        return list;
+    }
+
+    /**
+     * 指定した位置に最も近いユニットの居る距離を返す
+     * @param x 調べたい位置のX座標
+     * @param y 調べたい位置のY座標
+     * @param teamID チーム番号。0ならば1ターン目先攻チーム、1ならば1ターン目後攻チーム、それ以外なら両チームあわせて
+     * @return 指定した位置に最も近い駒が、指定位置からどれだけ離れているか
+     */
+    public synchronized int nearestDistance(int x, int y, int teamID) {
+        return nearestDistance(new Point(x, y), teamID);
+    }
+
+    /**
+     * 指定した位置に最も近いユニットの居る距離を返す
+     * @param pos 調べたい位置
+     * @param teamID チーム番号。0ならば1ターン目先攻チーム、1ならば1ターン目後攻チーム、それ以外なら両チームあわせて
+     * @return 指定した位置に最も近い駒が、指定位置からどれだけ離れているか
+     */
+    public synchronized int nearestDistance(Point pos, int teamID) {
+        int nearest = 99;   //別に大きい数字なら何だって良い…はず(たぶん8以上でOK)
+        if(teamID != 0 && teamID != 1) {
+            for(int team = 0; team < 2; team++) {
+                for(int unit = 0; unit < 4; unit++) {
+                    nearest = Math.min(nearest, distance(this.unitLocation[team][unit], pos));
+                }
+            }
+        } else {
+            for(int unit = 0; unit < 4; unit++) {
+                nearest = Math.min(nearest, distance(this.unitLocation[teamID][unit], pos));
+            }
+        }
+        return nearest;
+    }
 }
