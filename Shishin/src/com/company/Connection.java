@@ -88,6 +88,15 @@ public class Connection implements Runnable{
         }
     }
 
+    /** サーバにチャットを送信 */
+    public synchronized void sendChatMessage(String message) {
+        StringBuilder sbuf = new StringBuilder();
+        sbuf.append("600 ");
+        sbuf.append(message);
+        System.out.println(sbuf.toString());
+        this.sendMessage(sbuf.toString());
+    }
+
 
     /** サーバにユニットの行動を送信 **/
     public synchronized void sendPlayMessage(int selectedUnit, int x, int y) {
