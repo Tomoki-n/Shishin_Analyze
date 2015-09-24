@@ -47,7 +47,7 @@ public class Main {
 
     public static String AI_type(){
         String type = null;
-        System.out.println("AI:1.Higuchi 2.Nishinaka 3.Ishitani 4.Demo 5:DemoVer2 99.CUI-Mode\n");
+        System.out.println("AI:1.Higuchi 2.Nishinaka 3.Ishitani 4.Demo 5:DemoVer2 6.Higuchi(chat-off) 99.CUI-Mode\n");
         System.out.println("input AI_NUMBER: ");
         InputStreamReader isr = new InputStreamReader(System.in);
         BufferedReader br = new BufferedReader(isr);
@@ -120,7 +120,8 @@ public class Main {
                 int ai2 = Integer.parseInt(ai1);
 
                 if (ai2 == 1) {
-                    AI ai = new AI0(addr, ai1, type1);
+                    //AI0は直前に没りました。ご迷惑をおかけしすみません
+                    AI5 ai = new AI5(addr, ai1, type1);
 
                 }
                 else if (ai2 == 2) {
@@ -137,6 +138,11 @@ public class Main {
                 }
                 else if (ai2 == 5) {
                     AI4 ai = new AI4(addr, ai1, type1);
+
+                }
+                else if (ai2 == 6) {
+                    AI5 ai = new AI5(addr, ai1, type1, false);
+
                 }
                 else if(ai2 == 99) {
                     String name;

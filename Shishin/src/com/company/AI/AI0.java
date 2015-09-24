@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 /**
  * Created by tomoki-n on 2015/04/10.
+ * まとまらなかったので没りましたごめんなさい
  */
 public class AI0 extends AI {
 
@@ -45,7 +46,6 @@ public class AI0 extends AI {
         if (msg == "Select Unit") {
 
             //chat送信
-            //さすがにネタ要素なので、ここの実装は本編が片付いてからで…
             /*
             if(Math.random() <= (5.0 / 18.0)) {
                 this.sthread.sendChatMessage(Glyph.getGlyphSeq());
@@ -186,7 +186,6 @@ public class AI0 extends AI {
                     move[1] = 3;
                 }
 
-                //最初に動かした
                 move[2] = 2;
 
                 switch (preUnit) {
@@ -224,6 +223,45 @@ public class AI0 extends AI {
                  */
 
                 //TODO:ここ
+                //仮実装
+
+                //最初に動かした方向によって、次に動かす方向が決定
+                if(this.preUnit_l != -1) {
+                    preUnit = preUnit_l;
+                    preLeft = true;
+                    move[1] = 5;
+                } else {
+                    preUnit = preUnit_r;
+                    preLeft = false;
+                    move[1] = 3;
+                }
+
+                move[2] = 6;
+
+                switch (preUnit) {
+                    case GREEN:
+                    case RED:
+                        if((int)(Math.random() * 2.0) == 0) {
+                            move[0] = BLACK;
+                        } else {
+                            move[0] = YELLOW;
+                        }
+                        break;
+                    case BLACK:
+                    case YELLOW:
+                        if((int)(Math.random() * 2.0) == 0) {
+                            move[0] = BLACK;
+                        } else {
+                            move[0] = YELLOW;
+                        }
+                        break;
+                }
+
+                if(preLeft) {
+                    preUnit_r = move[0];
+                } else {
+                    preUnit_l = move[0];
+                }
                 break;
             default:
                 System.out.println("Error: 存在しないturnStateの値");
@@ -386,6 +424,12 @@ public class AI0 extends AI {
             //TODO:残り
             if(preUnit_l != -1 && preUnit_r != -1) {
                 //どっち先に動かそう…
+            } else if(preUnit_l != -1) {
+
+            } else if(preUnit_r != -1) {
+
+            } else {
+
             }
         }
 
