@@ -385,7 +385,7 @@ public class AI0 extends AI {
         } else {
             //TODO:残り
             if(preUnit_l != -1 && preUnit_r != -1) {
-
+                //どっち先に動かそう…
             }
         }
 
@@ -445,7 +445,8 @@ public class AI0 extends AI {
                         move[2] = winUnitPos.y;
                     } else {
                         //自らやられる方向には動かない
-                        ArrayList<Point> removeLose = (ArrayList<Point>) nextPosList.clone();
+                        ArrayList<Point> removeLose = new ArrayList<Point>();
+                        removeLose.addAll(nextPosList);
                         removeLose.remove(loseUnitPos);
                         assert !removeLose.isEmpty();
 
@@ -467,7 +468,8 @@ public class AI0 extends AI {
                             move[1] = winUnitPos.x;
                             move[2] = winUnitPos.y;
                         } else {
-                            ArrayList<Point> removeLose = (ArrayList<Point>) nextPosList.clone();
+                            ArrayList<Point> removeLose = new ArrayList<Point>();
+                            removeLose.addAll(nextPosList);
                             removeLose.remove(winUnitPos);
                             //TODO:負ける場所を避ける
                         }
