@@ -1,5 +1,7 @@
 package com.company.AI;
 
+import com.company.Glyph;
+
 import java.awt.*;
 import java.io.IOException;
 
@@ -50,9 +52,10 @@ public class AI0 extends AI {
             //さすがにネタ要素なので、ここの実装は本編が片付いてからで…
             /*
             if(Math.random() <= (5.0 / 18.0)) {
-                this.sthread.sendMessage("600 " + Glyph.getGlyphSeq());
+                this.sthread.sendChatMessage(Glyph.getGlyphSeq());
             }
-             */
+            */
+
 
             //ここからメイン
             int[] move = this.move_main();
