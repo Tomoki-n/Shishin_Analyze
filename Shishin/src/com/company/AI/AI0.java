@@ -2,6 +2,7 @@ package com.company.AI;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 /**
@@ -13,16 +14,11 @@ public class AI0 extends AI {
     private int preUnit_l = -1;
     private int preUnit_r = -1;
 
-    //現在どの戦術で動くかを指定(今のところ使ってない)
-    private int mode = MODE_OPENING;
-    private static final int MODE_DEFEND = 10;
-    private static final int MODE_OPENING = 11;
-
     //ターン後半でどのような動きをとるかの指定
     private int turnMode = -1;
     private static final int TM_DIRECT = 10;    //前半の手を指す時点で後半の手を決定した場合。tempUnit, tempPosの指定が必要
     private static final int TM_DEFEND = 20;    //前半終了時点で、2つの柱に自軍の駒が2体と1体居り、その1体のみで守られる柱から距離1の場所に残りの1体が居る状態
-    private static final int TM_SINGLE = 21;    //ターン後半で単独行動をとる場合。tempUnitとdestinationの指定が必要。
+    private static final int TM_SINGLE_TO2 = 21;    //ターン後半で単独行動をとる場合。tempUnitとdestinationの指定が必要。
     
     //一時的な指し手指示用
     //実際の使い方は対応するturnMode同士を見比べてくださいな
@@ -359,7 +355,7 @@ public class AI0 extends AI {
                         //残る1駒が自陣に残っている場合
                         tempUnit = move[0];
                         destination = tower;
-                        turnMode = TM_SINGLE;
+                        turnMode = TM_SINGLE_TO2;
 
                         if(tower.equals(tower_left)) {
                             move[1] = 3;
@@ -385,6 +381,9 @@ public class AI0 extends AI {
             }
         } else {
             //TODO:残り
+            if(preUnit_l != -1 && preUnit_r != -1) {
+
+            }
         }
 
 
@@ -415,12 +414,63 @@ public class AI0 extends AI {
                 }
                 break;
             case TM_DIRECT:
+                //前半で既に手が指定されている場合
                 move[0] = tempUnit;
                 move[1] = tempPos.x;
                 move[2] = tempPos.y;
                 break;
-            case TM_SINGLE:
-//TODO
+            case TM_SINGLE_TO2:
+                //単独で距離2以内の地点に動く場合
+                move[0] = tempUnit;
+                Point unitPos = this.unitLocation[this.MyTeamID][tempUnit];
+                Point winUnitPos = this.unitLocation[this.EnemyTeamID()][loseUnit1(tempUnit)];  //戦ったらこちらが勝利する相手
+                Point loseUnitPos = this.unitLocation[this.EnemyTeamID()][winUnit1(tempUnit)];  //戦ったら相手が勝利する相手
+                ArrayList<Point> nextPosList = new ArrayList<Point>(8);
+                for(int x = -1; x <= 1; x++) {
+                    for(int y = -1; y <= 1; y++) {
+                        Point nextPos = new Point(unitPos.x + x - 1, unitPos.y + y - 1);
+                        if(distance(nextPos, destination) <= 2 && !(x == 0 && y == 0)) {
+                            nextPosList.add(nextPos);
+                        }
+                    }
+                }
+
+                if(this.turnState == STATE_PLAY_TURN4) {
+                    if(nextPosList.contains(winUnitPos)) {
+                        //相手と戦って勝てるなら積極的に攻撃する
+                        move[1] = winUnitPos.x;
+                        move[2] = winUnitPos.y;
+                    } else {
+                        //自らやられる方向には動かない
+                        ArrayList<Point> removeLose = (ArrayList<Point>) nextPosList.clone();
+                        removeLose.remove(loseUnitPos);
+                        assert !removeLose.isEmpty();
+
+                        //TODO:相手が二体いるところを避ける
+                        int rand = (int) (Math.random() * removeLose.size());
+                        move[1] = removeLose.get(rand).x;
+                        move[2] = removeLose.get(rand).y;
+                    }
+                } else {
+                    if(nextPosList.contains(winUnitPos)) {
+                        boolean isOtherNear = false;
+                        for(int unit = 0; unit < 4; unit++) {
+                            if(distance(winUnitPos, this.unitLocation[this.EnemyTeamID()][unit]) == 1) {
+                                isOtherNear = true;
+                            }
+                        }
+
+                        if(!isOtherNear) {
+                            move[1] = winUnitPos.x;
+                            move[2] = winUnitPos.y;
+                        } else {
+                            ArrayList<Point> removeLose = (ArrayList<Point>) nextPosList.clone();
+                            removeLose.remove(winUnitPos);
+                            //TODO:負ける場所を避ける
+                        }
+                    }
+                }
+
                 break;
 
             //TODO:残り(前半の手が決まり次第)
@@ -450,4 +500,30 @@ public class AI0 extends AI {
         return existUnit(tower_left, teamID) + existUnit(tower_center, teamID) + existUnit(tower_right, teamID);
     }
 
+    /**
+     * 指定した駒に隣接するマスのリストを返す
+     * @param teamID 調べたい駒のあるチーム
+     * @param unit 調べたい駒の番号
+     * @return 指定した駒に隣接するマスのリスト
+     */
+    ArrayList<Point> unitNeighbor(int teamID, int unit) {
+        ArrayList<Point> list = new ArrayList<Point>();
+        Point unitPos = this.unitLocation[teamID][unit];
+        for(int xAdd = -1; xAdd <= 1; xAdd++) {
+            for(int yAdd = -1; yAdd <= 1; yAdd++) {
+                if(xAdd == 0 && yAdd == 0) {
+                    continue;
+                }
+                Point neighbor = new Point(unitPos.x + xAdd, unitPos.y + yAdd);
+                int x = neighbor.x;
+                int y = neighbor.y;
+                if(x >= 0 && x <= 8 && y >= 0 && y <= 8) {
+                    list.add(neighbor);
+                } else {
+
+                }
+            }
+        }
+        return list;
+    }
 }
