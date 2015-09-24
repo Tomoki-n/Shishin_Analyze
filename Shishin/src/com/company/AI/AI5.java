@@ -258,11 +258,10 @@ public class AI5 extends AI {
                     }
                 }
 
-                boolean isExistNeutral = false;
-                boolean isExistBlank = false;
-                boolean isTowerDecided = false;
-                int rand = (int)(Math.random() * 3.0);
-                Point tower = towerPos(rand);
+                boolean isExistNeutral = false; //中立な柱があるかどうか
+                boolean isExistBlank = false;   //駒がひとつもない柱があるかどうか
+                boolean isTowerDecided = false; //目的地の柱は決定したか
+                int rand;
 
                 for (int i = 0; i < 3; i++) {
                     if(this.towerHold[i] == -1) {
@@ -296,7 +295,6 @@ public class AI5 extends AI {
                             isTowerDecided = true;
                         }
                     }
-                    System.out.println("ssssss");
                 } while (!isTowerDecided);
 
                 if(rand == 0) {
@@ -354,6 +352,7 @@ public class AI5 extends AI {
                 move[1] = tempPos.x;
                 move[2] = tempPos.y;
                 if(tempPos.equals(getNearestTower(this.unitLocation[this.MyTeamID][unit[0]]))) {
+                    //柱に着いたら一時的な変数を初期化
                     unit[0] = -1;
                     unit[1] = -1;
                     route = -1;
