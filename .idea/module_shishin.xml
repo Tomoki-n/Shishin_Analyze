@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_shishin" default="compile.module.shishin">
+  <dirname property="module.shishin.basedir" file="${ant.file.module_shishin}"/>
+  
+  <property name="module.jdk.home.shishin" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.shishin" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.shishin" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.shishin" value="-encoding UTF-8 -source 8 ${compiler.args}"/>
+  
+  <property name="shishin.output.dir" value="${module.shishin.basedir}/../out/production/shishin"/>
+  <property name="shishin.testoutput.dir" value="${module.shishin.basedir}/../out/test/shishin"/>
+  
+  <path id="shishin.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="shishin.module.production.classpath">
+    <path refid="${module.jdk.classpath.shishin}"/>
+  </path>
+  
+  <path id="shishin.runtime.production.module.classpath">
+    <pathelement location="${shishin.output.dir}"/>
+  </path>
+  
+  <path id="shishin.module.classpath">
+    <path refid="${module.jdk.classpath.shishin}"/>
+    <pathelement location="${shishin.output.dir}"/>
+  </path>
+  
+  <path id="shishin.runtime.module.classpath">
+    <pathelement location="${shishin.testoutput.dir}"/>
+    <pathelement location="${shishin.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.shishin">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.shishin">
+    <patternset refid="excluded.from.module.shishin"/>
+  </patternset>
+  
+  
+  <target name="compile.module.shishin" depends="compile.module.shishin.production,compile.module.shishin.tests" description="Compile module shishin"/>
+  
+  <target name="compile.module.shishin.production" depends="register.custom.compilers" description="Compile module shishin; production classes"/>
+  
+  <target name="compile.module.shishin.tests" depends="register.custom.compilers,compile.module.shishin.production" description="compile module shishin; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.shishin" description="cleanup module">
+    <delete dir="${shishin.output.dir}"/>
+    <delete dir="${shishin.testoutput.dir}"/>
+  </target>
+</project>

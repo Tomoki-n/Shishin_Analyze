@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_shishin_viewer" default="compile.module.shishin_viewer">
+  <dirname property="module.shishin_viewer.basedir" file="${ant.file.module_shishin_viewer}"/>
+  
+  <property name="module.jdk.home.shishin_viewer" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.shishin_viewer" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.shishin_viewer" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.shishin_viewer" value="-encoding UTF-8 -source 8 ${compiler.args}"/>
+  
+  <property name="shishin_viewer.output.dir" value="${module.shishin_viewer.basedir}/../out/production/Shishin_Viewer"/>
+  <property name="shishin_viewer.testoutput.dir" value="${module.shishin_viewer.basedir}/../out/test/Shishin_Viewer"/>
+  
+  <path id="shishin_viewer.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="shishin_viewer.module.production.classpath">
+    <path refid="${module.jdk.classpath.shishin_viewer}"/>
+  </path>
+  
+  <path id="shishin_viewer.runtime.production.module.classpath">
+    <pathelement location="${shishin_viewer.output.dir}"/>
+  </path>
+  
+  <path id="shishin_viewer.module.classpath">
+    <path refid="${module.jdk.classpath.shishin_viewer}"/>
+    <pathelement location="${shishin_viewer.output.dir}"/>
+  </path>
+  
+  <path id="shishin_viewer.runtime.module.classpath">
+    <pathelement location="${shishin_viewer.testoutput.dir}"/>
+    <pathelement location="${shishin_viewer.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.shishin_viewer">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.shishin_viewer">
+    <patternset refid="excluded.from.module.shishin_viewer"/>
+  </patternset>
+  
+  
+  <target name="compile.module.shishin_viewer" depends="compile.module.shishin_viewer.production,compile.module.shishin_viewer.tests" description="Compile module Shishin_Viewer"/>
+  
+  <target name="compile.module.shishin_viewer.production" depends="register.custom.compilers" description="Compile module Shishin_Viewer; production classes"/>
+  
+  <target name="compile.module.shishin_viewer.tests" depends="register.custom.compilers,compile.module.shishin_viewer.production" description="compile module Shishin_Viewer; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.shishin_viewer" description="cleanup module">
+    <delete dir="${shishin_viewer.output.dir}"/>
+    <delete dir="${shishin_viewer.testoutput.dir}"/>
+  </target>
+</project>
